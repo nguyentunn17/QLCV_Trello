@@ -29,46 +29,39 @@ public class UserController {
     @GetMapping("/user")
     public Page<User> search(@RequestParam(name = "pageNo", defaultValue = "1") int pageNo,
                              @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
-                             @RequestParam(name = "keyword") String keyword){
+                             @RequestParam(name = "keyword") String keyword) {
         String sortDirection = "desc";
         Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by("id").ascending() : Sort.by("id").descending();
-        Pageable pageable = PageRequest.of(pageNo-1, pageSize, sort);
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         return userRepository.searchByKeyword(pageable, keyword);
     }
 
     @GetMapping("/user/all")
-    public ResponseEntity<List<User>> all(){
+    public ResponseEntity<List<User>> all() {
         return ResponseEntity.ok(userRepository.findAll());
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<User> one(@PathVariable Long id){
+    public ResponseEntity<User> one(@PathVariable Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Can't not found the "+ id));
+                .orElseThrow(() -> new RuntimeException("Can't not found the " + id));
         return ResponseEntity.ok(user);
     }
 
     @GetMapping("/user/reset/{id}")
-    public ResponseEntity<?> resetPass(@PathVariable Long id){
+    public ResponseEntity<?> resetPass(@PathVariable Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Can't not found the userId = "+ id));
+                .orElseThrow(() -> new RuntimeException("Can't not found the userId = " + id));
 
-        // Tạo một salt ngẫu nhiên
-        String salt = BCrypt.gensalt();
-
-        // Kết hợp mật khẩu mới với salt
-        String newPasswordWithSalt = "123@123Ab" + salt;
-
-        // Mã hóa mật khẩu kết hợp với salt mới
-        String hashedPassword = BCrypt.hashpw(newPasswordWithSalt, BCrypt.gensalt());
+        // Mã hóa mật khẩu mới
+        String hashedPassword = encoder.encode("123@123Ab");
 
         // Lưu mật khẩu mới vào cơ sở dữ liệu
         user.setPassword(hashedPassword);
-        user.setSalt(salt);
+
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("Mật khẩu đã được đặt lại về mặc định"));
     }
-
 
 }

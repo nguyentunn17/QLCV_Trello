@@ -36,20 +36,21 @@ public class SecurityConfiguration {
         return authConfig.getAuthenticationManager();
     }
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
         auth.setUserDetailsService(userDetailsService);
-        auth.setPasswordEncoder(passwordEncoder);
+        auth.setPasswordEncoder(passwordEncoder());
         return auth;
     }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-            return (web) -> web.ignoring().requestMatchers("/user/get-all","/board/**");
+            return (web) -> web.ignoring().requestMatchers("/user/all","/board/**");
     }
 
 

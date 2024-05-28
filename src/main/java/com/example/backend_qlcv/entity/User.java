@@ -44,9 +44,6 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "salt")
-    private String salt;
-
     @Column(name = "created_at")
     private Date createdAt;
 
@@ -62,11 +59,10 @@ public class User {
 
     public User() {}
 
-    public User(String username, String email, String password ,String salt, int status) {
+    public User(String username, String email, String password , int status) {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.salt = salt;
         this.status = status;
     }
 }

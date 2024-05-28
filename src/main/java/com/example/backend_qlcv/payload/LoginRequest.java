@@ -12,8 +12,5 @@ public class LoginRequest {
     @NotNull
     private String password;
 
-    @NotNull
-    private String salt;
-
     private boolean remember;
 }

@@ -9,7 +9,6 @@ public class AuthResponse {
 
     private String email;
     private String accessToken;
-
     private List<String> roles;
 
     public AuthResponse(String accessToken, Long id, String username, String email, List<String> roles) {

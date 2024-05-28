@@ -10,5 +10,4 @@ public class SignupRequest {
     private String password;
     private String email;
     private Set<String> role;
-    private String salt;
 }
