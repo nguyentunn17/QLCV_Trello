@@ -11,10 +11,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ChecklistRepository extends JpaRepository<Checklist,Long> {
-    @Query(value = """
-            SELECT * FROM public."checklists"
-            ORDER BY id ASC
-            """, nativeQuery = true)
-    Page<Board> getAll(Pageable pageable);
-
 }

@@ -22,6 +22,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
 
+        // Kiểm tra trạng thái người dùng
+        if (user.getStatus() != 1) {
+            throw new RuntimeException("User account is not active");
+        }
         return UserDetailsImpl.build(user);
     }
 }

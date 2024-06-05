@@ -24,7 +24,7 @@ public class History {
     private String tableName;
 
     @Column(name = "record_id")
-    private UUID recordId;
+    private Long recordId;
 
     @Column(name = "action")
     private String action;

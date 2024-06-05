@@ -36,7 +36,7 @@ public class Card {
 
     @ManyToOne
     @JoinColumn(name = "list_id", referencedColumnName = "id")
-    private List list;
+    private Lists lists;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")

@@ -50,7 +50,7 @@ public class SecurityConfiguration {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-            return (web) -> web.ignoring().requestMatchers("/user/all","/board/**");
+            return (web) -> web.ignoring().requestMatchers("/board/**");
     }
 
 

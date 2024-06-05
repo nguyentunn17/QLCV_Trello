@@ -1,6 +1,6 @@
 package com.example.backend_qlcv.repository;
 
-import com.example.backend_qlcv.entity.Board;
+
 import com.example.backend_qlcv.entity.History;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,11 +15,11 @@ public interface HistoryRepository extends JpaRepository<History, Long> {
             SELECT * FROM public."boards"
             ORDER BY id ASC
             """, nativeQuery = true)
-    Page<Board> getAll(Pageable pageable);
+    Page<History> getAll(Pageable pageable);
 
     @Query(value = """ 
-                   SELECT * FROM public.boards WHERE name LIKE %kw%
+                   SELECT * FROM public."history" WHERE name LIKE %kw%
                    ORDER BY id ASC\s
 """, nativeQuery = true)
-    Page<Board> searchByKeyword(Pageable pageable, @Param("kw") String keyWord);
+    Page<History> searchByKeyword(Pageable pageable, @Param("kw") String keyWord);
 }

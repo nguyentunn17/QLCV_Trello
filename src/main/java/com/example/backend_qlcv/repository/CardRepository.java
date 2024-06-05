@@ -9,17 +9,23 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long> {
     @Query(value = """
-            SELECT * FROM public."cards"
-            ORDER BY id ASC
-            """, nativeQuery = true)
-    Page<Board> getAll(Pageable pageable);
+                   SELECT * FROM public.cards WHERE name LIKE %kw%
+                   ORDER BY id ASC\s
+""", nativeQuery = true)
+    Page<Card> searchByKeyword(Pageable pageable, @Param("kw") String keyWord);
 
-//    @Query(value = """
-//                   SELECT * FROM public.task WHERE name LIKE %kw%
-//                   ORDER BY id ASC\s
-//""", nativeQuery = true)
-//    Page<Board> searchByKeyword(Pageable pageable, @Param("kw") String keyWord);
+    @Query(value = """
+                   SELECT *
+                                    FROM boards b
+                                    JOIN lists l ON b.id = l.board_id
+                                    JOIN cards c ON l.id = c.list_id
+                                    WHERE c.title LIKE '%keyword%' OR c.description LIKE '%keyword%'
+                                       OR l.name LIKE '%keyword%' OR b.name LIKE '%keyword%'
+""", nativeQuery = true)
+    List<Card> searchBoardsListsCardsByKeyword(@Param("keyword") String keyword);
 }

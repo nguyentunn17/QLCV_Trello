@@ -30,7 +30,7 @@ public class User {
     private String username;
 
     @NotBlank
-    @Size(max = 50)
+    @Size(max = 255)
     @Email
     private String email;
 
@@ -38,11 +38,8 @@ public class User {
     @Size(max = 120)
     private String password;
 
-    @Column(name = "first_name")
-    private String firstName;
-
-    @Column(name = "last_name")
-    private String lastName;
+    @Column(name = "full_name")
+    private String fullName;
 
     @Column(name = "created_at")
     private Date createdAt;

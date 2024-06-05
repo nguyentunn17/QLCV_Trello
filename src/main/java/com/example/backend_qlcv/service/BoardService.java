@@ -2,13 +2,15 @@ package com.example.backend_qlcv.service;
 
 import com.example.backend_qlcv.entity.Board;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface BoardService {
     List<Board> getAll();
 
-    Page<Board> getPage(Integer pageNo);
+    Page<Board> getPage(Pageable pageable, Long userId, String role);
+
 
     Board add(Board board);
 
@@ -19,4 +21,6 @@ public interface BoardService {
     void delete(Long id);
 
     Page<Board> search(Integer pageNo, String keyWord);
+
+    void addMemberToBoard(Long boardId, Long userId, Long adderId);
 }

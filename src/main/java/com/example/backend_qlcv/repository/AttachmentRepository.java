@@ -1,7 +1,6 @@
 package com.example.backend_qlcv.repository;
 
 import com.example.backend_qlcv.entity.Attachment;
-import com.example.backend_qlcv.entity.Board;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,7 +15,7 @@ public interface AttachmentRepository extends JpaRepository<Attachment, Long> {
             SELECT * FROM public."attachments"
             ORDER BY id ASC
             """, nativeQuery = true)
-    Page<Board> getAll(Pageable pageable);
+    Page<Attachment> getAll(Pageable pageable);
 
 //    @Query(value = """
 //                   SELECT * FROM public.task WHERE name LIKE %kw%

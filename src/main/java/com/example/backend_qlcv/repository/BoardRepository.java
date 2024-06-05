@@ -14,7 +14,14 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             SELECT * FROM public."boards"
             ORDER BY id ASC
             """, nativeQuery = true)
-    Page<Board> getAll(Pageable pageable);
+    Page<Board> getAllBoards(Pageable pageable);
+    @Query(value = """
+            SELECT b.* FROM public.boards b
+            JOIN public.user_boards ub ON b.id = ub.board_id
+            WHERE ub.user_id = :userId
+            ORDER BY b.id ASC
+            """, nativeQuery = true)
+    Page<Board> getBoardsByUser(Pageable pageable, @Param("userId") Long userId);
 
     @Query(value = """ 
                    SELECT * FROM public.boards WHERE name LIKE %kw%

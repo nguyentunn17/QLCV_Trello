@@ -27,7 +27,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Boolean existsByEmail(String email);
 
     @Query(value = """
-    SELECT u FROM User u WHERE (u.first_name LIKE %:kw% OR u.last_name LIKE %:kw% OR u.username LIKE %:kw% OR u.email LIKE %:kw%)
+    SELECT u FROM users u WHERE (u.first_name LIKE %:kw% OR u.last_name LIKE %:kw% OR u.username LIKE %:kw% OR u.email LIKE %:kw%)
     """, nativeQuery = true)
     Page<User> searchByKeyword(Pageable pageable, @Param("kw") String keyword);
 }

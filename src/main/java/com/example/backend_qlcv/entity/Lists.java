@@ -6,15 +6,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Builder
 @Table(name = "lists")
-public class List {
+public class Lists {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

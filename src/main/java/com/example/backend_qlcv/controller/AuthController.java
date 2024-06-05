@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -102,33 +101,29 @@ public class AuthController {
             Set<String> strRoles = signUpRequest.getRole();
             Set<Role> roles = new HashSet<>();
 
-            if (strRoles == null) {
-                Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                roles.add(userRole);
-            } else {
-                strRoles.forEach(role -> {
-                    switch (role) {
-                        case "admin":
-                            Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                            roles.add(adminRole);
+        if (strRoles == null) {
+            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            roles.add(userRole);
+            System.out.println("Assigned ROLE_USER to the new user");
+        } else {
+            strRoles.forEach(role -> {
+                switch (role) {
+                    case "admin":
+                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(adminRole);
+                        System.out.println("Assigned ROLE_ADMIN to the new user");
+                        break;
 
-                            break;
-                        case "mod":
-                            Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
-                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                            roles.add(modRole);
-
-                            break;
-                        default:
-                            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                            roles.add(userRole);
-                    }
-                });
-            }
-
+                    default:
+                        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(userRole);
+                        System.out.println("Assigned ROLE_USER to the new user by default");
+                }
+            });
+        }
             user.setRoles(roles);
             userRepository.save(user);
 
