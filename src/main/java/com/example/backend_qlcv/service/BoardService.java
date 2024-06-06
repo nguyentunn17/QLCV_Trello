@@ -9,7 +9,7 @@ import java.util.List;
 public interface BoardService {
     List<Board> getAll();
 
-    Page<Board> getPage(Pageable pageable, Long userId, String role);
+    Page<Board> getAllBoards( Integer pageNo);
 
 
     Board add(Board board);

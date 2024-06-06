@@ -8,6 +8,7 @@ import com.example.backend_qlcv.service.AttachmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,9 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     private CardRepository cardRepository;
 
+    // Lấy thời gian hiện tại và tạo thành Timestamp
+    Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+
     @Override
     public List<Attachment> getAll() {
         return attachmentRepository.findAll();
@@ -29,7 +33,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     public Attachment add(Attachment attachment) {
         Attachment attachmentSave = Attachment.builder()
                 .filePath(attachment.getFilePath())
-                .uploadAt(attachment.getUploadAt())
+                .uploadAt(currentTime)
                 .card(cardRepository.findById(getIdCard(String.valueOf(attachment.getCard()))).get())
                 .build();
         attachmentRepository.save(attachmentSave);

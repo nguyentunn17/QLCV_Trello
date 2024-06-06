@@ -6,7 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
+import java.sql.Timestamp;
+
 
 @Data
 @NoArgsConstructor
@@ -26,13 +27,13 @@ public class Card {
     private String description;
 
     @Column(name = "due_date")
-    private Date dueDate;
+    private Timestamp dueDate;
 
     @Column(name = "position")
     private Integer position;
 
     @Column(name = "created_at")
-    private Date createdAt;
+    private Timestamp createdAt;
 
     @ManyToOne
     @JoinColumn(name = "list_id", referencedColumnName = "id")

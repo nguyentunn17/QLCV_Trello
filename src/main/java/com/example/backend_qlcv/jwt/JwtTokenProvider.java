@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -25,9 +26,15 @@ public class JwtTokenProvider {
 
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
+        // Lấy các roles của user
+        String roles = userPrincipal.getAuthorities().stream()
+                .map(grantedAuthority -> grantedAuthority.getAuthority())
+                .collect(Collectors.joining(","));
+
         // Tạo chuỗi json web token từ username của user.
         return Jwts.builder()
                 .setSubject((userPrincipal.getUsername()))
+                .claim("roles", roles)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
@@ -35,11 +42,20 @@ public class JwtTokenProvider {
     }
 
     // Lấy thông tin user từ jwt
+
+    // Lấy userName
     public String getUserFromJWT(String token) {
         return Jwts.parser()
                 .setSigningKey(JWT_SECRET)
                 .parseClaimsJws(token)
                 .getBody().getSubject();
+    }
+    //Lấy role
+    public String getRolesFromJWT(String token) {
+        return Jwts.parser()
+                .setSigningKey(JWT_SECRET)
+                .parseClaimsJws(token)
+                .getBody().get("roles", String.class);
     }
 
     public boolean validateToken(String authToken) {

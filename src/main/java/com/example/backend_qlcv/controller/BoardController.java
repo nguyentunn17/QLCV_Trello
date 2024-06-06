@@ -6,6 +6,7 @@ import com.example.backend_qlcv.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,12 +25,9 @@ public class BoardController {
         return boardService.getAll();
     }
 
-    @GetMapping("hien-thi")
-    public ResponseEntity<Page<Board>> getBoards(Pageable pageable,
-                                                 @RequestParam("userId") Long userId,
-                                                 @RequestParam("role") String role) {
-        Page<Board> boards = boardService.getPage(pageable, userId, role);
-        return ResponseEntity.ok(boards);
+    @GetMapping("/hien-thi")
+    public ResponseEntity hienThi(@RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo) {
+        return new ResponseEntity(boardService.getAllBoards(pageNo), HttpStatus.OK);
     }
 
     @GetMapping("detail/{id}")

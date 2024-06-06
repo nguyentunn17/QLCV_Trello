@@ -6,7 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
+import java.sql.Timestamp;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,9 +27,14 @@ public class Board {
     private String description;
 
     @Column(name = "created_at")
-    private Date createdAt;
+    private Timestamp createdAt;
+
+    @Column(name = "status")
+    private int status;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User createdBy;
+
+
 }

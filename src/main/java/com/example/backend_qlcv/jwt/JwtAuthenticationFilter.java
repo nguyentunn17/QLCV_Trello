@@ -34,6 +34,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 // Lấy id user từ chuỗi jwt
                 String username = tokenProvider.getUserFromJWT(jwt);
+                // Lấy thông tin vai trò từ chuỗi jwt
+                String roles = tokenProvider.getRolesFromJWT(jwt);
                 // Lấy thông tin người dùng từ username
                 UserDetails userDetails = userService.loadUserByUsername(username);
                 if(userDetails != null) {
@@ -43,6 +45,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                    // Lưu thông tin user và vai trò vào context
+                    request.setAttribute("roles", roles);
+                    request.setAttribute("username", username);
                 }
             }
         } catch (Exception ex) {

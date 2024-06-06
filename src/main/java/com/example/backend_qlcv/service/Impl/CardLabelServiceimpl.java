@@ -36,6 +36,7 @@ public class CardLabelServiceimpl implements CardLabelService
                 .card(cardRepository.findById(getIdCard(String.valueOf(cardLabel.getCard()))).get())
                 .label(labelRepository.findById(getIdLabel(String.valueOf(cardLabel.getLabel()))).get())
                 .build();
+        cardLabelRepository.save(cardLabelSave);
         return null;
     }
 

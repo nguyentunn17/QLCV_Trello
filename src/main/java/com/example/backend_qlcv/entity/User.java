@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,7 +42,7 @@ public class User {
     private String fullName;
 
     @Column(name = "created_at")
-    private Date createdAt;
+    private Timestamp createdAt;
 
     @Column(length = 1)
     private int status;

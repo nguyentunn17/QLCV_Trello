@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @Data
@@ -33,7 +34,7 @@ public class History {
     private String changeDescription;
 
     @Column(name = "changed_at")
-    private Date changedAt;
+    private Timestamp changedAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")

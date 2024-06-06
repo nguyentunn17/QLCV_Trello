@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ChecklistItemServiceImpl implements ChecklistItemService {
@@ -26,12 +27,29 @@ public class ChecklistItemServiceImpl implements ChecklistItemService {
 
     @Override
     public ChecklistItem add(ChecklistItem checklistItem) {
-
+        ChecklistItem checklistItemSave = ChecklistItem.builder()
+                .name(checklistItem.getName())
+                .isComleted(checklistItem.getIsComleted())
+                .position(checklistItem.getPosition())
+                .checklist(checklistRepository.findById(getIdChecklist(String.valueOf(checklistItem.getChecklist()))).get())
+                .build();
+        checklistItemRepository.save(checklistItemSave);
         return null;
     }
 
     @Override
     public ChecklistItem update(ChecklistItem checklistItem, Long id) {
+        Optional<ChecklistItem> optionalChecklistItem = checklistItemRepository.findById(id);
+        if (optionalChecklistItem.isPresent()){
+            optionalChecklistItem.map(checklistItemUpdate -> {
+                checklistItemUpdate.setName(checklistItem.getName());
+                checklistItemUpdate.setIsComleted(checklistItem.getIsComleted());
+                checklistItemUpdate.setPosition(checklistItem.getPosition());
+                checklistItemUpdate.setChecklist(checklistRepository.findById(getIdChecklist(String.valueOf(checklistItem.getChecklist()))).get());
+            return checklistItemRepository.save(checklistItemUpdate);
+            }).orElse(null);
+        }
+
         return null;
     }
 

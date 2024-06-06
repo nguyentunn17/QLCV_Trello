@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 @Data
 @NoArgsConstructor
@@ -23,7 +23,7 @@ public class Comment {
     private String content;
 
     @Column(name = "created_at")
-    private Date createdAt;
+    private Timestamp createdAt;
 
     @ManyToOne
     @JoinColumn(name = "card_id", referencedColumnName = "id")

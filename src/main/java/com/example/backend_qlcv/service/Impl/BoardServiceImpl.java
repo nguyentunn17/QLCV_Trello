@@ -7,6 +7,7 @@ import com.example.backend_qlcv.repository.BoardRepository;
 import com.example.backend_qlcv.repository.UserBoardRepository;
 import com.example.backend_qlcv.repository.UserRepository;
 import com.example.backend_qlcv.service.BoardService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,28 +36,38 @@ public class BoardServiceImpl implements BoardService {
     @Autowired
     private UserBoardRepository userBoardRepository;
 
+    @Autowired
+    private HttpServletRequest request;
+
+    /// Lấy thời gian hiện tại và tạo thành Timestamp
+    Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+
     @Override
     public List<Board> getAll() {
         return boardRepository.findAll();
     }
 
     @Override
-    public Page<Board> getPage(Pageable pageable, Long userId, String role) {
-        if ("ROLE_ADMIN".equalsIgnoreCase(role)) {
-            return boardRepository.getAllBoards(pageable);
-        } else if ("ROLE_USER".equalsIgnoreCase(role)) {
-            return boardRepository.getBoardsByUser(pageable, userId);
+    public Page<Board> getAllBoards(Integer pageNo ) {
+        String roles = (String) request.getAttribute("roles");
+        String username = (String) request.getAttribute("username");
+        Pageable pageable = PageRequest.of(pageNo, 10);
+        if (roles.contains("ROLE_ADMIN")) {
+            return boardRepository.getAll(pageable);
+        } else {
+            return boardRepository.findBoardsByUsername(username, pageable);
         }
-        return Page.empty(); // Trả về trang rỗng nếu vai trò không hợp lệ
     }
 
 
     @Override
     public Board add(Board board) {
+
         Board boardSave = Board.builder()
                 .name(board.getName())
                 .description(board.getDescription())
-                .createdAt(board.getCreatedAt())
+                .createdAt(currentTime)
+                .status(1)
                 .createdBy(userRepository.findById(getIdUser(String.valueOf(board.getCreatedBy()))).get())
                 .build();
         boardRepository.save(boardSave);
@@ -69,7 +81,6 @@ public class BoardServiceImpl implements BoardService {
             optionalBoard.map(boardUpdate -> {
                 boardUpdate.setName(board.getName());
                 boardUpdate.setDescription(board.getDescription());
-                boardUpdate.setCreatedAt(board.getCreatedAt());
                 boardUpdate.setCreatedBy(userRepository.findById(getIdUser(String.valueOf(board.getCreatedBy()))).get());
                 return boardRepository.save(boardUpdate);
             }).orElse(null);

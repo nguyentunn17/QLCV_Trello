@@ -6,7 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
+import java.sql.Timestamp;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,7 +23,7 @@ public class Attachment {
     private String filePath;
 
     @Column(name = "uploaded_at")
-    private Date uploadAt;
+    private Timestamp uploadAt;
 
     @ManyToOne
     @JoinColumn(name = "card_id", referencedColumnName = "id")

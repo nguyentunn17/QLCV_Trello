@@ -48,17 +48,21 @@ public class SecurityConfiguration {
         return auth;
     }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-            return (web) -> web.ignoring().requestMatchers("/board/**");
-    }
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//            return (web) -> web.ignoring().requestMatchers("/board/**");
+//    }
 
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-                .authorizeHttpRequests().requestMatchers("/auth/**").permitAll()
+                .authorizeHttpRequests()
+                .requestMatchers("/auth/**").permitAll()
+                //.requestMatchers("/board/**").hasRole("ADMIN") // Chỉ cho phép ADMIN truy cập
+                //.requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // Chỉ cho phép USER và ADMIN truy cập
+                //.requestMatchers("/board/**").authenticated() // Chỉ cho phép truy cập nếu đã đăng nhập
                 .anyRequest().authenticated();
 
         http.authenticationProvider(authenticationProvider());
