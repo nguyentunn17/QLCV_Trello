@@ -1,0 +1,77 @@
+<div class="wrapper">
+  <div class="bg-animate" id="bg-animate"></div>
+  <div class="curved" id="curved"></div>
+
+  <div class="form-wrapper sign-in">
+    <form (ngSubmit)="onSubmit()">
+      <h2>Sign in</h2>
+      <div class="input-box">
+        <input type="text" required [(ngModel)]="form.username" name="username">
+        <label>Username</label>
+      </div>
+
+      <div class="input-box">
+        <input type="password" required [(ngModel)]="form.password" name="password">
+        <label>Password</label>
+      </div>
+      <div>
+        <div *ngIf="isLoginFailed" class="error-mess mb-4">
+          {{ errorMessage }}
+        </div>
+      </div>
+      <br>
+<!--      <div class="forgot-pass">-->
+<!--        <a href="#">Forgot-Password?</a>-->
+<!--      </div>-->
+
+      <button type="submit">Sign In</button>
+
+      <div class="sign-link">
+        <p>Don't have an account?<a href="#" (click)="activeSignUp()">Sign Up</a></p>
+      </div>
+
+      <div class="social-platform">
+        <p>Or sign in with</p>
+        <div class="social-icons">
+          <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#"><i class="fa-brands fa-google"></i></a>
+          <a href="#"><i class="fa-brands fa-windows"></i></a>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="form-wrapper sign-up">
+    <form (ngSubmit)="onRegister()">
+      <h2>Sign Up</h2>
+      <div class="input-box">
+        <input type="email" required [(ngModel)]="registerForm.email" name="email">
+        <label>Email</label>
+      </div>
+
+      <div class="input-box">
+        <input type="text" required [(ngModel)]="registerForm.username" name="username">
+        <label>Username</label>
+      </div>
+
+      <div class="input-box">
+        <input type="password" required [(ngModel)]="registerForm.password" name="password">
+        <label>Password</label>
+      </div>
+
+      <button type="submit">Sign Up</button>
+
+      <div class="sign-link">
+        <p>Already have an account?<a href="#" (click)="activeSignIn()">Sign In</a></p>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="colors">
+  <span (click)="changeColor('#77dd77')" class="color" style="--clr:#77dd77;"></span>
+  <span (click)="changeColor('#f67599')" class="color" style="--clr:#f67599;"></span>
+  <span (click)="changeColor('#876ed7')" class="color active" style="--clr:#876ed7;"></span>
+  <span (click)="changeColor('#1db9c3')" class="color" style="--clr:#1db9c3;"></span>
+  <span (click)="changeColor('#ffb347')" class="color" style="--clr:#ffb347;"></span>
+</div>

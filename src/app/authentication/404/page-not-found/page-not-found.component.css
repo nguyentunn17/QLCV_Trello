@@ -1,0 +1,22 @@
+.modal-custom{
+    z-index: 500;
+    position: fixed; /* Stay in place */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: #671f9d;
+    color: #333;
+    overflow: auto;
+  }
+  .modal-custom::-webkit-scrollbar{
+    display: none;
+  }
+  .error-image{
+    height: 100%;
+  }
+  .error-buttons{
+    position: relative;
+    bottom: 50px;
+  }
+  
