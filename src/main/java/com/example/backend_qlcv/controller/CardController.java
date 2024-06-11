@@ -48,4 +48,16 @@ public class CardController {
         cardService.addMemberToCard(cardId, userId);
         return "Member added to card and email notification sent";
     }
+
+    @PostMapping("/{cardId}/archive")
+    public ResponseEntity<Void> archiveCard(@PathVariable Long cardId, @RequestParam Long userId) {
+        cardService.archiveCard(cardId, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{cardId}/restore")
+    public ResponseEntity<Void> restoreCard(@PathVariable Long cardId, @RequestParam Long userId) {
+        cardService.restoreCard(cardId, userId);
+        return ResponseEntity.ok().build();
+    }
 }

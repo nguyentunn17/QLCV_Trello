@@ -16,4 +16,8 @@ public interface ListService {
     Lists detail(Long id);
 
     void delete(Long id);
+
+    void archiveList(Long listId, Long userId);
+
+    void restoreList(Long listId, Long userId);
 }

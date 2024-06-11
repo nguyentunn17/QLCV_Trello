@@ -30,7 +30,7 @@ public class Board {
     private Timestamp createdAt;
 
     @Column(name = "status")
-    private int status;
+    private Integer status;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")

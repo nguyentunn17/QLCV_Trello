@@ -23,6 +23,9 @@ public class Lists {
     @Column(name = "position")
     private Integer position;
 
+    @Column(name = "status")
+    private Boolean status;
+
 
     @ManyToOne
     @JoinColumn(name = "board_id", referencedColumnName = "id")

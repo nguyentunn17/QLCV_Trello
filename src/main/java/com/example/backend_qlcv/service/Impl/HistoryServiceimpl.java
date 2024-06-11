@@ -1,8 +1,11 @@
 package com.example.backend_qlcv.service.Impl;
 
+import com.example.backend_qlcv.entity.Card;
 import com.example.backend_qlcv.entity.History;
 import com.example.backend_qlcv.entity.User;
+import com.example.backend_qlcv.repository.CardRepository;
 import com.example.backend_qlcv.repository.HistoryRepository;
+import com.example.backend_qlcv.repository.ListRepository;
 import com.example.backend_qlcv.repository.UserRepository;
 import com.example.backend_qlcv.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ public class HistoryServiceimpl implements HistoryService {
 
     @Autowired
     private UserRepository userRepository;
+
 
     // Lấy thời gian hiện tại và tạo thành Timestamp
     private final Timestamp currentTime = new Timestamp(System.currentTimeMillis());
@@ -69,6 +73,24 @@ public class HistoryServiceimpl implements HistoryService {
     public void delete(Long id) {
         historyRepository.deleteById(id);
     }
+
+    @Override
+    public void record(String tableName, Long recordId, String action, String changeDescription, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        History history = History.builder()
+                .tableName(tableName)
+                .recordId(recordId)
+                .action(action)
+                .changeDescription(changeDescription)
+                .changedAt(currentTime)
+                .user(user)
+                .build();
+
+        historyRepository.save(history);
+    }
+
+
     public Long getIdUser(String userName){
         for (User user  : userRepository.findAll()){
             if (userName.equals(user.getUsername())){

@@ -1,6 +1,7 @@
 package com.example.backend_qlcv.service;
 
 import com.example.backend_qlcv.entity.History;
+import com.example.backend_qlcv.entity.User;
 
 import java.util.List;
 
@@ -14,4 +15,7 @@ public interface HistoryService {
     History detail(Long id);
 
     void delete(Long id);
+
+    void record(String tableName, Long recordId, String action, String changeDescription, Long userId);
+
 }

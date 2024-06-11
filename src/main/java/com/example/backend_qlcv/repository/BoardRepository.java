@@ -19,10 +19,16 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                    SELECT b.* FROM public.boards b
                    JOIN public.user_boards ub ON b.id = ub.board_id
                    JOIN public.users u ON ub.user_id = u.id
-                   WHERE u.username = :username
+                   WHERE u.username = :username AND b.status = 1
                    ORDER BY b.id ASC
                    """, nativeQuery = true)
     Page<Board> findBoardsByUsername(@Param("username") String username, Pageable pageable);
+
+    @Query(value = """
+            SELECT * FROM public."boards" WHERE status = ?1
+            ORDER BY id ASC
+            """, nativeQuery = true)
+    Page<Board> loc(Pageable pageable, Integer status);
 
     @Query(value = """ 
                    SELECT * FROM public.boards WHERE name LIKE %kw%

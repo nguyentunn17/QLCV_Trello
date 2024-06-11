@@ -54,6 +54,10 @@ public class BoardController {
     public ResponseEntity search(@RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo, @RequestParam(name = "keyWord") String keyWord) {
         return new ResponseEntity(boardService.search(pageNo, keyWord), HttpStatus.OK);
     }
+    @GetMapping("loc")
+    public ResponseEntity loc(@RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo, @RequestParam(name = "status")  Integer status) {
+        return new ResponseEntity(boardService.loc(pageNo, status), HttpStatus.OK);
+    }
     @PostMapping("{boardId}/members/{userId}/adder/{adderId}")
     public ResponseEntity<String> addMemberToBoard(
             @PathVariable Long boardId,

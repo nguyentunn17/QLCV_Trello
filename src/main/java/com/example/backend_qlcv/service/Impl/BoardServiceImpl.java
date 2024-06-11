@@ -138,4 +138,10 @@ public class BoardServiceImpl implements BoardService {
         String text = "Chào " + user.getFullName()+ ",\n\nBạn đã được thêm vào board \"" + board.getName() + "\" bởi " + adder.getFullName() + ".";
         emailService.sendEmail(user.getEmail(), subject, text);
     }
+
+    @Override
+    public Page<Board> loc(Integer pageNo, Integer status) {
+        Pageable pageable = PageRequest.of(pageNo, 10);
+        return boardRepository.loc(pageable,status);
+    }
 }

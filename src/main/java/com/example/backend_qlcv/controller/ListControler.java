@@ -42,4 +42,15 @@ public class ListControler {
         listService.delete(Long.valueOf(id.toString()));
     }
 
+    @PostMapping("/{listId}/archive")
+    public ResponseEntity<Void> archiveList(@PathVariable Long listId, @RequestParam Long userId) {
+        listService.archiveList(listId, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{listId}/restore")
+    public ResponseEntity<Void> restoreList(@PathVariable Long listId, @RequestParam Long userId) {
+        listService.restoreList(listId, userId);
+        return ResponseEntity.ok().build();
+    }
 }

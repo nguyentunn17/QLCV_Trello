@@ -26,6 +26,9 @@ public class Card {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "start_date")
+    private  Timestamp startDate;
+
     @Column(name = "due_date")
     private Timestamp dueDate;
 
@@ -34,6 +37,9 @@ public class Card {
 
     @Column(name = "created_at")
     private Timestamp createdAt;
+
+    @Column(name = "status")
+    private Boolean status;
 
     @ManyToOne
     @JoinColumn(name = "list_id", referencedColumnName = "id")

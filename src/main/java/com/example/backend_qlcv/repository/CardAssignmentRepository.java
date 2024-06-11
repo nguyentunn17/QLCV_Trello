@@ -20,6 +20,12 @@ public interface CardAssignmentRepository extends JpaRepository<CardAssignment, 
             """, nativeQuery = true)
     Page<CardAssignment> getAll(Pageable pageable);
 
+
+    @Query(value = """
+            SELECT ca.user.id FROM CardAssignment ca WHERE ca.card.id = :cardId
+            """, nativeQuery = true)
+    List<Long> findAssignedUserIdsByCardId(@Param("cardId") Long cardId);
+
 //    @Query(value = """
 //                   SELECT * FROM public.boards WHERE name LIKE %kw%
 //                   ORDER BY id ASC\s

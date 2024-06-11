@@ -23,4 +23,6 @@ public interface BoardService {
     Page<Board> search(Integer pageNo, String keyWord);
 
     void addMemberToBoard(Long boardId, Long userId, Long adderId);
+
+    Page<Board> loc(Integer pageNo, Integer status);
 }
