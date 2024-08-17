@@ -10,6 +10,7 @@ import com.example.backend_qlcv.service.ListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,30 +32,52 @@ public class ListServiceImpl implements ListService {
 
     @Override
     public Lists add(Lists lists) {
+        // Kiểm tra xem board có tồn tại hay không
+        Optional<Board> boardOptional = boardRepository.findById(lists.getBoardId());
+        if (!boardOptional.isPresent()) {
+            throw new IllegalArgumentException("Board not found");
+        }
+
+        // Thiết lập board cho list
+        Board board = boardOptional.get();
+        lists.setBoard(board);
+
+        // Thiết lập các trường khác của list
         Lists listsSave = Lists.builder()
                 .name(lists.getName())
                 .position(lists.getPosition())
                 .status(lists.getStatus())
-                .board(boardRepository.findById(getIdBoard(String.valueOf(lists.getBoard()))).get())
+                .boardId(lists.getBoardId())
                 .build();
-        listRepository.save(listsSave);
-        return null;
+
+        // Lưu list vào cơ sở dữ liệu
+        Lists savedList = listRepository.save(listsSave);
+        return savedList;
     }
 
     @Override
     public Lists update(Lists lists, Long id) {
+        Optional<Board> boardOptional = boardRepository.findById(lists.getBoardId());
+        if (!boardOptional.isPresent()) {
+            throw new IllegalArgumentException("Board not found");
+        }
+
+        // Thiết lập board cho list
+        Board board = boardOptional.get();
+        lists.setBoard(board);
+
         Optional<Lists> optionalList = listRepository.findById(id);
         if (optionalList.isPresent()){
-            optionalList.map(listUpdate -> {
+            Lists updatedList = optionalList.map(listUpdate -> {
                 listUpdate.setName(lists.getName());
-                listUpdate.setPosition(lists.getPosition());
-                listUpdate.setStatus(lists.getStatus());
-                listUpdate.setBoard(boardRepository.findById(getIdBoard(String.valueOf(lists.getBoard()))).get());
-            return listRepository.save(listUpdate);
+                listUpdate.setBoardId(lists.getBoardId());
+                return listRepository.save(listUpdate);
             }).orElse(null);
+            return updatedList;
         }
         return null;
     }
+
 
     @Override
     public Lists detail(Long id) {
@@ -82,6 +105,11 @@ public class ListServiceImpl implements ListService {
         listRepository.save(lists);
 
         historyService.record("lists", listId, "RESTORE", "List restored from archive", userId);
+    }
+
+    @Override
+    public List<Lists> getListsByBoardId(Long boardId) {
+        return listRepository.findByBoardId(boardId);
     }
 
     public Long getIdBoard(String boardName){

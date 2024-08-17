@@ -26,8 +26,10 @@ public class Lists {
     @Column(name = "status")
     private Boolean status;
 
-
     @ManyToOne
-    @JoinColumn(name = "board_id", referencedColumnName = "id")
+    @JoinColumn(name = "board_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Board board;
+
+    @Column(name = "board_id")
+    private Long boardId;
 }

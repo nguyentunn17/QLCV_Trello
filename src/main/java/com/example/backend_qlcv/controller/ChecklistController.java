@@ -17,29 +17,38 @@ public class ChecklistController {
     @Autowired
     private ChecklistService checklistService;
 
-    @GetMapping("get-all")
-    public List<Checklist> getAll() {
-        return checklistService.getAll();
+
+    // hiển thị checklist của card đó
+    @GetMapping("card/{cardId}")
+    public List<Checklist> getCheckListByCardId(@PathVariable Long cardId) {
+        return checklistService.getChecklistByCardId(cardId);
     }
 
 
     @GetMapping("detail/{id}")
-    public ResponseEntity detail(@PathVariable("id") String id) {
+    public ResponseEntity detail(@PathVariable("id") Long id) {
         return new ResponseEntity(checklistService.detail(Long.valueOf(id.toString())), HttpStatus.OK);
     }
 
+    // Thêm
     @PostMapping("add")
     public ResponseEntity add(@RequestBody Checklist checklist) {
         return new ResponseEntity(checklistService.add(checklist), HttpStatus.OK);
     }
 
+    // Cập nhật
     @PutMapping("update/{id}")
-    public ResponseEntity update(@RequestBody Checklist checklist, @PathVariable("id") String id) {
-        return new ResponseEntity(checklistService.update(checklist, Long.valueOf(id.toString())), HttpStatus.OK);
+    public ResponseEntity<?> update(@RequestBody Checklist checklist, @PathVariable Long id) {
+        Checklist updateChecklist = checklistService.update(checklist, id);
+        if (updateChecklist != null) {
+            return ResponseEntity.ok(updateChecklist);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("delete/{id}")
-    public void delete(@PathVariable("id") String id) {
+    public void delete(@PathVariable("id") Long id) {
         checklistService.delete(Long.valueOf(id.toString()));
     }
 

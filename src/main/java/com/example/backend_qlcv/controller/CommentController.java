@@ -22,7 +22,7 @@ public class CommentController {
 
 
     @GetMapping("detail/{id}")
-    public ResponseEntity detail(@PathVariable("id") String id) {
+    public ResponseEntity detail(@PathVariable("id") Long id) {
         return new ResponseEntity(commentService.detail(Long.valueOf(id.toString())), HttpStatus.OK);
     }
 
@@ -32,12 +32,12 @@ public class CommentController {
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity update(@RequestBody Comment comment, @PathVariable("id") String id) {
+    public ResponseEntity update(@RequestBody Comment comment, @PathVariable("id") Long id) {
         return new ResponseEntity(commentService.update(comment, Long.valueOf(id.toString())), HttpStatus.OK);
     }
 
     @DeleteMapping("delete/{id}")
-    public void delete(@PathVariable("id") String id) {
+    public void delete(@PathVariable("id") Long id) {
         commentService.delete(Long.valueOf(id.toString()));
     }
 

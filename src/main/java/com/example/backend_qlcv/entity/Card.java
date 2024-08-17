@@ -32,6 +32,9 @@ public class Card {
     @Column(name = "due_date")
     private Timestamp dueDate;
 
+    @Column(name = "completed")
+    private Boolean completed;
+
     @Column(name = "position")
     private Integer position;
 
@@ -42,8 +45,11 @@ public class Card {
     private Boolean status;
 
     @ManyToOne
-    @JoinColumn(name = "list_id", referencedColumnName = "id")
+    @JoinColumn(name = "list_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Lists lists;
+
+    @Column(name = "list_id")
+    private Long listsId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")

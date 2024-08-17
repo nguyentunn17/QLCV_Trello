@@ -18,41 +18,42 @@ import java.io.IOException;
 
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     @Autowired
     private JwtTokenProvider tokenProvider;
 
     @Autowired
     private UserDetailsServiceImpl userService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
-            // Lấy jwt từ request
             String jwt = getJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-                // Lấy id user từ chuỗi jwt
+                Long userId = tokenProvider.getUserIdFromJWT(jwt);
                 String username = tokenProvider.getUserFromJWT(jwt);
-                // Lấy thông tin vai trò từ chuỗi jwt
                 String roles = tokenProvider.getRolesFromJWT(jwt);
-                // Lấy thông tin người dùng từ username
+
+                log.debug("Extracted userId: " + userId); // Thêm log này
+
                 UserDetails userDetails = userService.loadUserByUsername(username);
-                if(userDetails != null) {
-                    // Nếu người dùng hợp lệ, set thông tin cho Seturity Context
-                    UsernamePasswordAuthenticationToken
-                            authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                if (userDetails != null) {
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                    // Lưu thông tin user và vai trò vào context
                     request.setAttribute("roles", roles);
                     request.setAttribute("username", username);
+                    request.setAttribute("userId", userId);
                 }
             }
         } catch (Exception ex) {
-            log.error("failed on set user authentication", ex);
+            log.error("Failed on set user authentication", ex);
         }
 
         filterChain.doFilter(request, response);

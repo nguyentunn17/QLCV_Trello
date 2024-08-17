@@ -49,6 +49,8 @@ public class EmailService {
 
     @Scheduled(cron = "0 0 9 * * ?")
     public void sendReminders() {
+        // không lấy findAll
+        // timestemp
         List<Card> cards = cardRepository.findAll();
 
         for (Card card : cards) {

@@ -14,4 +14,6 @@ public interface LabelService {
     Label detail(Long id);
 
     void delete(Long id);
+
+    List<Label> getLabelByBoardId(Long boardId);
 }

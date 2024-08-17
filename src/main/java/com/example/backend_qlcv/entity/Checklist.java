@@ -20,7 +20,10 @@ public class Checklist {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "card_id")
+    private Long cardId;
+
     @ManyToOne
-    @JoinColumn(name = "card_id", referencedColumnName = "id")
+    @JoinColumn(name = "card_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Card card;
 }

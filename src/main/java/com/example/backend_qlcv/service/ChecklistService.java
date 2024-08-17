@@ -2,6 +2,7 @@ package com.example.backend_qlcv.service;
 
 
 import com.example.backend_qlcv.entity.Checklist;
+import com.example.backend_qlcv.entity.Lists;
 
 import java.util.List;
 
@@ -14,5 +15,7 @@ public interface ChecklistService {
 
     Checklist detail(Long id);
 
-    void delete(Long id);
+    void delete(Long checklistId);
+
+    List<Checklist> getChecklistByCardId(Long cardId);
 }

@@ -21,9 +21,14 @@ public class LabelController {
         return labelService.getAll();
     }
 
+    @GetMapping("get-by-board")
+    public ResponseEntity<List<Label>> getLabelByBoardId(@RequestParam("boardId") Long boardId){
+        List<Label> labels = labelService.getLabelByBoardId(boardId);
+        return new ResponseEntity<>(labels,HttpStatus.OK);
+    }
 
     @GetMapping("detail/{id}")
-    public ResponseEntity detail(@PathVariable("id") String id) {
+    public ResponseEntity detail(@PathVariable("id") Long id) {
         return new ResponseEntity(labelService.detail(Long.valueOf(id.toString())), HttpStatus.OK);
     }
 
@@ -33,12 +38,17 @@ public class LabelController {
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity update(@RequestBody Label label, @PathVariable("id") String id) {
-        return new ResponseEntity(labelService.update(label, Long.valueOf(id.toString())), HttpStatus.OK);
+    public ResponseEntity<?> update(@RequestBody Label label, @PathVariable("id") Long id) {
+        Label updateLabel = labelService.update(label, id);
+        if(updateLabel != null){
+            return ResponseEntity.ok(updateLabel);
+        }else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("delete/{id}")
-    public void delete(@PathVariable("id") String id) {
+    public void delete(@PathVariable("id") Long id) {
         labelService.delete(Long.valueOf(id.toString()));
     }
 

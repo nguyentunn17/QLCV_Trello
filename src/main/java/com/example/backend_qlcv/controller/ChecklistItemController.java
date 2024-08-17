@@ -1,7 +1,7 @@
 package com.example.backend_qlcv.controller;
 
+
 import com.example.backend_qlcv.entity.ChecklistItem;
-import com.example.backend_qlcv.repository.ChecklistItemRepository;
 import com.example.backend_qlcv.service.ChecklistItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,19 +11,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/checklistitem")
+@RequestMapping("/checklistItem/")
 public class ChecklistItemController {
     @Autowired
     private ChecklistItemService checklistItemService;
 
-    @GetMapping("get-all")
-    public List<ChecklistItem> getAll() {
-        return checklistItemService.getAll();
+    //Hiện thị checklistItem theo checklist
+    @GetMapping("checklist/{checklistId}")
+    public List<ChecklistItem> getChecklistItemByChecklistId(@PathVariable Long checklistId) {
+        return checklistItemService.getChecklistItemByChecklistId(checklistId);
     }
 
 
     @GetMapping("detail/{id}")
-    public ResponseEntity detail(@PathVariable("id") String id) {
+    public ResponseEntity detail(@PathVariable("id") Long id) {
         return new ResponseEntity(checklistItemService.detail(Long.valueOf(id.toString())), HttpStatus.OK);
     }
 
@@ -33,12 +34,17 @@ public class ChecklistItemController {
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity update(@RequestBody ChecklistItem checklistItem, @PathVariable("id") String id) {
-        return new ResponseEntity(checklistItemService.update(checklistItem, Long.valueOf(id.toString())), HttpStatus.OK);
+    public ResponseEntity<?> update(@RequestBody ChecklistItem checklistItem, @PathVariable("id") Long id) {
+        ChecklistItem updateChecklistItem = checklistItemService.update(checklistItem, id);
+        if (updateChecklistItem != null) {
+            return ResponseEntity.ok(updateChecklistItem);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("delete/{id}")
-    public void delete(@PathVariable("id") String id) {
+    public void delete(@PathVariable("id") Long id) {
         checklistItemService.delete(Long.valueOf(id.toString()));
     }
 

@@ -14,4 +14,7 @@ public interface ChecklistItemService {
     ChecklistItem detail(Long id);
 
     void delete(Long id);
+
+    List<ChecklistItem> getChecklistItemByChecklistId( Long checklistId);
+
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/list/")
+@RequestMapping("/lists/")
 public class ListControler {
     @Autowired
     private ListService listService;
@@ -21,25 +21,36 @@ public class ListControler {
         return listService.getAll();
     }
 
-
     @GetMapping("detail/{id}")
-    public ResponseEntity detail(@PathVariable("id") String id) {
-        return new ResponseEntity(listService.detail(Long.valueOf(id.toString())), HttpStatus.OK);
+    public ResponseEntity<?> detail(@PathVariable Long id) {
+        Lists lists = listService.detail(id);
+        if (lists != null) {
+            return ResponseEntity.ok(lists);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping("add")
-    public ResponseEntity add(@RequestBody Lists lists) {
-        return new ResponseEntity(listService.add(lists), HttpStatus.OK);
+    public ResponseEntity<?> add(@RequestBody Lists lists) {
+        Lists addedList = listService.add(lists);
+        return ResponseEntity.ok(addedList);
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity update(@RequestBody Lists lists, @PathVariable("id") String id) {
-        return new ResponseEntity(listService.update(lists, Long.valueOf(id.toString())), HttpStatus.OK);
+    public ResponseEntity<?> update(@RequestBody Lists lists, @PathVariable Long id) {
+        Lists updatedList = listService.update(lists, id);
+        if (updatedList != null) {
+            return ResponseEntity.ok(updatedList);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("delete/{id}")
-    public void delete(@PathVariable("id") String id) {
-        listService.delete(Long.valueOf(id.toString()));
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        listService.delete(id);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{listId}/archive")
@@ -52,5 +63,9 @@ public class ListControler {
     public ResponseEntity<Void> restoreList(@PathVariable Long listId, @RequestParam Long userId) {
         listService.restoreList(listId, userId);
         return ResponseEntity.ok().build();
+    }
+    @GetMapping("/board/{boardId}")
+    public List<Lists> getListsByBoardId(@PathVariable Long boardId) {
+        return listService.getListsByBoardId(boardId);
     }
 }

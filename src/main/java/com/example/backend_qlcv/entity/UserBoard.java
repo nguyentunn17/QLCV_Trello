@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.sql.Timestamp;
 
 import java.sql.Date;
 
@@ -23,7 +24,10 @@ public class UserBoard {
     private String role;
 
     @Column(name = "assigned_at")
-    private Date assignedAt;
+    private Timestamp assignedAt;
+
+    @Column(name = "status")
+    private Integer status;
 
     @ManyToOne
     @JoinColumn(name = "board_id", referencedColumnName = "id")
@@ -32,4 +36,6 @@ public class UserBoard {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
+
+
 }

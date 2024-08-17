@@ -15,14 +15,13 @@ public class JwtTokenProvider {
     // Đoạn JWT_SECRET này là bí mật, chỉ có phía server biết
     private final String JWT_SECRET = "Authorization";
 
-    //Thời gian có hiệu lực của chuỗi jwt
-    private final long JWT_EXPIRATION = 24 * 60 * 60 * 1000; // 24 hour;
+    // Thời gian có hiệu lực của chuỗi jwt
+    private final long JWT_EXPIRATION = 24 * 60 * 60 * 1000; // 24 hours
 
     // Tạo ra jwt từ thông tin user
     public String generateToken(Authentication authentication) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
-
 
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
@@ -31,10 +30,11 @@ public class JwtTokenProvider {
                 .map(grantedAuthority -> grantedAuthority.getAuthority())
                 .collect(Collectors.joining(","));
 
-        // Tạo chuỗi json web token từ username của user.
+        // Tạo chuỗi json web token từ thông tin user
         return Jwts.builder()
-                .setSubject((userPrincipal.getUsername()))
-                .claim("roles", roles)
+                .setSubject(Long.toString(userPrincipal.getId())) // Sử dụng userId làm subject
+                .claim("username", userPrincipal.getUsername()) // Thêm username vào claim
+                .claim("roles", roles) // Thêm roles vào claim
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
@@ -42,20 +42,32 @@ public class JwtTokenProvider {
     }
 
     // Lấy thông tin user từ jwt
-
     // Lấy userName
     public String getUserFromJWT(String token) {
         return Jwts.parser()
                 .setSigningKey(JWT_SECRET)
                 .parseClaimsJws(token)
-                .getBody().getSubject();
+                .getBody()
+                .get("username", String.class); // Lấy username từ claim
     }
-    //Lấy role
+
+    // Lấy role
     public String getRolesFromJWT(String token) {
         return Jwts.parser()
                 .setSigningKey(JWT_SECRET)
                 .parseClaimsJws(token)
-                .getBody().get("roles", String.class);
+                .getBody()
+                .get("roles", String.class);
+    }
+
+    // Lấy id
+    public Long getUserIdFromJWT(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(JWT_SECRET)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return Long.parseLong(claims.getSubject()); // Lấy userId từ subject
     }
 
     public boolean validateToken(String authToken) {

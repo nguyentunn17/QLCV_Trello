@@ -24,7 +24,7 @@ public class HistoryController {
     }
 
     @GetMapping("detail/{id}")
-    public ResponseEntity detail(@PathVariable("id") String id) {
+    public ResponseEntity detail(@PathVariable("id") Long id) {
         return new ResponseEntity(historyService.detail(Long.valueOf(id.toString())), HttpStatus.OK);
     }
 
@@ -34,12 +34,12 @@ public class HistoryController {
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity update(@RequestBody History history, @PathVariable("id") String id) {
+    public ResponseEntity update(@RequestBody History history, @PathVariable("id") Long id) {
         return new ResponseEntity(historyService.update(history, Long.valueOf(id.toString())), HttpStatus.OK);
     }
 
     @DeleteMapping("delete/{id}")
-    public void delete(@PathVariable("id") String id) {
+    public void delete(@PathVariable("id") Long id) {
         historyService.delete(Long.valueOf(id.toString()));
     }
 

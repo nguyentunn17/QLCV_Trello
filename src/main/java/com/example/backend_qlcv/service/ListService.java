@@ -20,4 +20,6 @@ public interface ListService {
     void archiveList(Long listId, Long userId);
 
     void restoreList(Long listId, Long userId);
+
+    List<Lists> getListsByBoardId(Long boardId);
 }

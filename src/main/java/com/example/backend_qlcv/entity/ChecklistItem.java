@@ -20,13 +20,16 @@ public class ChecklistItem {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "is_comleted")
-    private Integer isComleted;
+    @Column(name = "is_completed")
+    private Boolean isCompleted;
 
     @Column(name = "position")
     private Integer position;
 
+    @Column(name = "checklist_id")
+    private Long checklistId;
+
     @ManyToOne
-    @JoinColumn(name = "checklist_id", referencedColumnName = "id")
+    @JoinColumn(name = "checklist_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Checklist checklist;
 }

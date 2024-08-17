@@ -16,4 +16,7 @@ public interface UserBoardService {
     UserBoard detail(Long id);
 
     void delete(Long id);
+
+    String getUserRole(Long userId, Long boardId);
+
 }

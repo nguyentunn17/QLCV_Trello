@@ -27,27 +27,45 @@ public class ChecklistItemServiceImpl implements ChecklistItemService {
 
     @Override
     public ChecklistItem add(ChecklistItem checklistItem) {
+        Optional<Checklist> checklistOptional = checklistRepository.findById(checklistItem.getChecklistId());
+        if(!checklistOptional.isPresent()){
+            throw new IllegalArgumentException("Checklist not found");
+        }
+
+        Checklist checklist = checklistOptional.get();
+        checklistItem.setChecklist(checklist);
+
         ChecklistItem checklistItemSave = ChecklistItem.builder()
                 .name(checklistItem.getName())
-                .isComleted(checklistItem.getIsComleted())
+                .isCompleted(checklistItem.getIsCompleted())
                 .position(checklistItem.getPosition())
-                .checklist(checklistRepository.findById(getIdChecklist(String.valueOf(checklistItem.getChecklist()))).get())
+                .checklistId(checklistItem.getChecklistId())
                 .build();
-        checklistItemRepository.save(checklistItemSave);
-        return null;
+        ChecklistItem saveChecklistItem = checklistItemRepository.save(checklistItemSave);
+        return saveChecklistItem;
     }
 
     @Override
     public ChecklistItem update(ChecklistItem checklistItem, Long id) {
+
+        Optional<Checklist> checklistOptional = checklistRepository.findById(checklistItem.getChecklistId());
+        if(!checklistOptional.isPresent()){
+            throw new IllegalArgumentException("Checklist not found");
+        }
+        Checklist checklist = checklistOptional.get();
+        checklistItem.setChecklist(checklist);
+
         Optional<ChecklistItem> optionalChecklistItem = checklistItemRepository.findById(id);
         if (optionalChecklistItem.isPresent()){
+            ChecklistItem updateChecklistItem =
             optionalChecklistItem.map(checklistItemUpdate -> {
                 checklistItemUpdate.setName(checklistItem.getName());
-                checklistItemUpdate.setIsComleted(checklistItem.getIsComleted());
+                checklistItemUpdate.setIsCompleted(checklistItem.getIsCompleted());
                 checklistItemUpdate.setPosition(checklistItem.getPosition());
-                checklistItemUpdate.setChecklist(checklistRepository.findById(getIdChecklist(String.valueOf(checklistItem.getChecklist()))).get());
+                checklistItemUpdate.setChecklistId(checklistItem.getChecklistId());
             return checklistItemRepository.save(checklistItemUpdate);
             }).orElse(null);
+            return updateChecklistItem;
         }
 
         return null;
@@ -60,8 +78,16 @@ public class ChecklistItemServiceImpl implements ChecklistItemService {
 
     @Override
     public void delete(Long id) {
+
         checklistItemRepository.deleteById(id);
     }
+
+    @Override
+    public List<ChecklistItem> getChecklistItemByChecklistId(Long checklistId) {
+        return checklistItemRepository.findByChecklistId(checklistId);
+    }
+    
+
     public Long getIdChecklist(String checklistName){
         for(Checklist checklist : checklistRepository.findAll()){
             if (checklistName.equals(checklist.getName())){

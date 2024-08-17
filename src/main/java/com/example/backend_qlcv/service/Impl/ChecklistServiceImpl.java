@@ -1,12 +1,13 @@
 package com.example.backend_qlcv.service.Impl;
 
-import com.example.backend_qlcv.entity.Card;
-import com.example.backend_qlcv.entity.Checklist;
+import com.example.backend_qlcv.entity.*;
 import com.example.backend_qlcv.repository.CardRepository;
+import com.example.backend_qlcv.repository.ChecklistItemRepository;
 import com.example.backend_qlcv.repository.ChecklistRepository;
 import com.example.backend_qlcv.service.ChecklistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,9 @@ public class ChecklistServiceImpl implements ChecklistService {
     @Autowired
     private CardRepository cardRepository;
 
+    @Autowired
+    private ChecklistItemRepository checklistItemRepository;
+
     @Override
     public List<Checklist> getAll() {
         return checklistRepository.findAll();
@@ -27,22 +31,46 @@ public class ChecklistServiceImpl implements ChecklistService {
 
     @Override
     public Checklist add(Checklist checklist) {
+        // Kiểm tra xem card có tồn tại hay không
+        Optional<Card>  cardOptional = cardRepository.findById(checklist.getCardId());
+        if (!cardOptional.isPresent()) {
+            throw new IllegalArgumentException("Card not found");
+        }
+        // Thiết lập card cho checklist
+        Card card = cardOptional.get();
+        checklist.setCard(card);
+
+        // Thiết lập các trường khác của checklist
         Checklist checklistSave = Checklist.builder()
                 .name(checklist.getName())
-                .card(cardRepository.findById(getIdCard(String.valueOf(checklist.getCard()))).get())
+                .cardId(checklist.getCardId())
                 .build();
-        return checklistRepository.save(checklistSave);
+
+        // Lưu checklist vào cơ sở dữ liệu
+        Checklist savedChecklist = checklistRepository.save(checklistSave);
+        return savedChecklist;
     }
+
+
 
     @Override
     public Checklist update(Checklist checklist, Long id) {
+        Optional<Card>  cardOptional = cardRepository.findById(checklist.getCardId());
+        if (!cardOptional.isPresent()) {
+            throw new IllegalArgumentException("Card not found");
+        }
+        // Thiết lập card cho checklist
+        Card card = cardOptional.get();
+        checklist.setCard(card);
+
         Optional<Checklist> optionalChecklist = checklistRepository.findById(id);
         if(optionalChecklist.isPresent()){
-            optionalChecklist.map(checklistUpdate ->{
+            Checklist updateChecklist = optionalChecklist.map(checklistUpdate ->{
                 checklistUpdate.setName(checklist.getName());
-                checklistUpdate.setCard(cardRepository.findById(getIdCard(String.valueOf(checklist.getCard()))).get());
+                checklistUpdate.setCardId(checklist.getCardId());
                 return checklistRepository.save(checklistUpdate);
             }).orElse(null);
+            return updateChecklist;
         }
         return null;
     }
@@ -52,10 +80,33 @@ public class ChecklistServiceImpl implements ChecklistService {
         return checklistRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     @Override
-    public void delete(Long id) {
-        checklistRepository.deleteById(id);
+    public void delete(Long checklistId) {
+        // Kiểm tra xem checklist có tồn tại hay không
+        if (checklistId == null || !checklistRepository.existsById(checklistId)) {
+            throw new IllegalArgumentException("Checklist không tồn tại.");
+        }
+
+        // Kiểm tra xem có các checklist item nào không trước khi xóa
+        List<ChecklistItem> items = checklistItemRepository.findByChecklistId(checklistId);
+        if (items.isEmpty()) {
+            System.out.println("Không có checklist item nào liên quan đến checklist này.");
+        } else {
+            // Xóa tất cả checklist items liên quan đến checklist này
+            checklistItemRepository.deleteByChecklistId(checklistId);
+        }
+
+        // Xóa checklist sau khi đã xóa các items
+        checklistRepository.deleteById(checklistId);
     }
+
+
+    @Override
+    public List<Checklist> getChecklistByCardId(Long cardId) {
+        return checklistRepository.findByCardId(cardId);
+    }
+
     public Long getIdCard(String cardName){
         for (Card card : cardRepository.findAll()){
             if(cardName.equals(card.getTitle())){

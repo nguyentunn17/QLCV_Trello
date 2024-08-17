@@ -28,4 +28,8 @@ public interface CardRepository extends JpaRepository<Card, Long> {
                                        OR l.name LIKE '%keyword%' OR b.name LIKE '%keyword%'
 """, nativeQuery = true)
     List<Card> searchBoardsListsCardsByKeyword(@Param("keyword") String keyword);
+
+    @Query("SELECT c FROM Card c where c.status = true AND c.listsId = :listId" )
+    List<Card> findByListsId(Long listId);
 }
+
