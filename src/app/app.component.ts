@@ -28,12 +28,12 @@ export class AppComponent {
     if (bgAnimate){
     bgAnimate.style.background = color;
     bgAnimate.classList.add('active');
-    
+
     setTimeout(()=>{
       bgAnimate.classList.remove('active');
-    }, 1200); 
+    }, 1200);
   }
 }
-  
+
 }
 

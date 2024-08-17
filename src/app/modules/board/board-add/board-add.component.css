@@ -1,0 +1,129 @@
+
+.create{
+  display: block;
+  color: white;
+  font-size: 20px;
+  background-color: #6c43b8;
+  border-radius: 6px;
+  padding: 7px;
+  margin-left: 4.5rem;
+  margin-top: 2rem;
+  height: 50px;
+  width: 100px;
+  border: white;
+  margin-bottom: 50px
+}
+
+.create:active{
+  background-color: rgb(209, 209, 209);
+}
+
+mat-sidenav-container {
+  height: 100%;
+  overflow: hidden;
+}
+
+mat-sidenav {
+  padding-top: 0.5rem;
+}
+
+.entry {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding:0.75rem 0.1rem;
+}
+
+h1 {
+  margin: 1em 4.5rem;
+  font-size: larger;
+}
+
+.pbg-panel1 {
+  display: inline-flex;
+  width: 330px;
+  height: 250px;
+  padding: 8px;
+  background-color: rgb(121, 121, 121);
+  border-radius: 10px;
+  margin-left: 4.5rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.pbg-panel2 {
+  display: inline-flex;
+  width: 330px;
+  height: 250px;
+  padding: 8px;
+  background-color: rgb(121, 121, 121);
+  border-radius: 10px;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.cbg-panel1 {
+  display: inline-flex;
+  width: 100px;
+  height: 70px;
+  padding: 8px;
+  background-color: rgb(121, 121, 121);
+  border-radius: 10px;
+  margin-left: 4.5rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.cbg-panel2 {
+  display: inline-flex;
+  width: 100px;
+  height: 70px;
+  padding: 8px;
+  background-color: rgb(121, 121, 121);
+  border-radius: 10px;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.board-title, .board-description {
+  margin-left: 4.5rem;
+  font-size: large;
+}
+
+.text-input {
+  width: 40%;
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-size: 1.2rem;
+}
+
+/* select-with-cards.component.css */
+.mini-card {
+  display: inline-block; /* Hiển thị các mini card trên cùng một dòng */
+  margin-right: 5px; /* Khoảng cách giữa các mini card */
+  margin-bottom: 5px; /* Khoảng cách dưới mini card */
+  padding: 5px 10px; /* Khoảng cách lề trong mini card */
+  border: 1px solid #ccc; /* Đường viền của mini card */
+  border-radius: 5px; /* Độ cong viền của mini card */
+  background-color: #f0f0f0; /* Màu nền của mini card */
+  font-size: 14px; /* Cỡ chữ của mini card */
+}
+
+#selectedOptions {
+  margin-top: 10px; /* Khoảng cách từ phần đã chọn đến phần chọn */
+}
+

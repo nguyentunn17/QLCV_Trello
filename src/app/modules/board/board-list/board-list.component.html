@@ -1,0 +1,20 @@
+<section>
+  <div>
+    <h2>Bảng</h2>
+  </div>
+  <hr>
+  <div class="content">
+    <div class="container-fluid">
+      <div class="board-panel">
+        <div class="trello-card" *ngFor="let board of boards" [routerLink]="['/board', board.id, board.name]"  (click)="viewBoard(board.id)">
+          <div class="card-header">
+            {{ board.name }}
+          </div>
+          <div class="card-body">
+            <p class="card-text">{{ board.description }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

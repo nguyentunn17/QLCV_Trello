@@ -1,0 +1,578 @@
+<section>
+  <div class="row">
+    <div class="col-md-3">
+      <!-- Hiển thị input nếu đang ở chế độ chỉnh sửa và là ADMIN -->
+      <div *ngIf="isAdmin && isEditing; else viewMode">
+        <input
+          type="text"
+          [value]="boardName"
+          (blur)="onBlur($event)"
+          (keyup.enter)="onKeyUpEnter($event)"
+          autofocus
+        />
+      </div>
+      <!-- Hiển thị tên board và cho phép chỉnh sửa khi click -->
+      <ng-template #viewMode>
+        <h2 (click)="isAdmin && toggleEdit()">{{boardName}}</h2>
+      </ng-template>
+    </div>
+    <div class="col-md-3" ></div>
+    <div class="col-md-3" ></div>
+
+    <!--Button chia sẻ để thêm thành viên vào-->
+    <div class="col-md-3" >
+      <div class="d-flex align-items-center">
+        <button (click)="toggleMembersSection2()" class="btn btn-info me-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
+            <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
+            <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
+          </svg> Chia sẻ
+        </button>
+
+        <!--Nếu là ADMIN thì hiện đóng bảng-->
+        <div *ngIf="isAdmin; else memberButtons">
+          <button (click)="closeBoard()" class="btn btn-danger">Đóng bảng</button>
+        </div>
+      </div>
+
+      <!-- Nếu là MEMBER thì hiện thị rời bảng-->
+      <ng-template #memberButtons>
+        <button (click)="leaveBoard()" class="btn btn-warning">Rời bảng</button>
+      </ng-template>
+
+      <!-- -->
+      <div *ngIf="showMembersSection2" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Thêm thành viên vào bảng {{ boardName }}</h5>
+            <button class="btn btn-danger" (click)="toggleMembersSection2()">X</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="searchInput1">Tìm kiếm:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="searchInput1"
+                placeholder="Tìm kiếm thành viên"
+                (input)="onSearchNotInBoard($event)"
+              />
+            </div>
+            <div class="form-group">
+              <label for="exampleFormControlSelect2">Thành viên:</label>
+              <select
+                multiple
+                class="form-control"
+                id="exampleFormControlSelect3"
+              >
+                <option
+                  *ngFor="let user of usersNotInBoard"
+                  [value]="user.id"
+                  [selected]="isSelectedNotInBoard(user)"
+                  (click)="onSelectChangeNotInBoard(user)"
+                  [hidden]="!user.visible"
+                >
+                  {{ user.fullName }}
+                </option>
+              </select>
+            </div>
+            <div id="selectedOptions1" class="mt-4">
+              <div *ngFor="let selectedUser of selectedUsersNotInBoard" class="mini-card">
+                <span>{{ selectedUser.fullName }}</span>
+                <button
+                  class="btn btn-sm btn-outline-danger ml-2"
+                  (click)="removeSelectedUserNotInBoard(selectedUser)"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            <button class="btn btn-primary" (click)="addMemberInBoard()" >Thêm</button>
+          </div>
+          <div>
+            <div *ngIf="isAdmin">
+              Thành viên đã trong bảng
+              <div class="mt-4" *ngIf="originalUsersInBoardExceptAdmin && originalUsersInBoardExceptAdmin.length > 0">
+                <div *ngFor="let selectedUser of originalUsersInBoardExceptAdmin" class="mini-card">
+                  <span>{{ selectedUser.fullName }}</span>
+                  <button
+                    class="btn btn-sm btn-outline-danger ml-2"
+                    (click)="removeUserFromBoard(selectedUser)"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-md-9 list-container-wrapper">
+      <div class="list-container" cdkDropListGroup>
+        <div *ngFor="let list of lists;  trackBy: trackById"  class="list" cdkDropList (cdkDropListDropped)="dropList($event)">
+          <ng-container *ngIf="editingListId === list.id; else displayTitle">
+            <input [(ngModel)]="list.name" (blur)="saveListName(list)" (keydown.enter)="saveListName(list)" class="form-control" />
+          </ng-container>
+          <ng-template #displayTitle>
+            <h3 (click)="editListName(list.id)">{{ list.name }}</h3>
+          </ng-template>
+          <div *ngFor="let card of list.cards" class="card" cdkDrag (click)="openCardModal(card, list)">
+            {{ card.title }}
+          </div>
+          <div class="add-card-container">
+            <input [(ngModel)]="newCardTitle" class="form-control" placeholder="Nhập tên cho thẻ này" *ngIf="selectedListId === list.id">
+            <button class="btn btn-secondary" (click)="selectedListId = list.id" *ngIf="selectedListId !== list.id"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-patch-plus" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5"/>
+              <path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z"/>
+            </svg> Thêm thẻ</button>
+            <div *ngIf="selectedListId === list.id" class="action-buttons">
+              <button class="btn btn-success" (click)="addCard()">Lưu thẻ</button>
+              <button (click)="closeCard()" class="btn btn-danger">X</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 add-list-container">
+      <input [(ngModel)]="newListName" class="form-control" placeholder="Thêm danh sách">
+      <button class="btn btn-primary" (click)="addList()" style="height: 35px">Thêm</button>
+    </div>
+  </div>
+
+  <!-- Modal for updating card -->
+  <div *ngIf="selectedCard" class = "modal">
+    <div class="modal-content">
+      <div class="row">
+        <div class="col-sm-8">
+          <button (click)="closeModal()" class="btn btn-danger">X</button>
+          <br>
+          <br>
+          <div class="input-card">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-window-sidebar" viewBox="0 0 16 16">
+              <path d="M2.5 4a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1m2-.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m1 .5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/>
+              <path d="M2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v2H1V3a1 1 0 0 1 1-1zM1 13V6h4v8H2a1 1 0 0 1-1-1m5 1V6h9v7a1 1 0 0 1-1 1z"/>
+            </svg>
+            <input type="text" id="title" [(ngModel)]="selectedCard.title" (blur)="updateCard()" (ngModelChange)="updateCard()" style="border: none; font-size: 25px">
+            <br>
+            trong danh sách <span>{{ selectedListName }}</span>
+          </div>
+            <div class="mt-4" *ngIf="originalUsersInBoard && originalUsersInBoard.length > 0">
+              Thành viên
+              <div *ngFor="let selectedUser of originalUsersInBoard" class="mini-card">
+                <span>{{ selectedUser.fullName }}</span>
+                <button
+                  class="btn btn-sm btn-outline-danger ml-2"
+                  (click)="removeMember(selectedUser)"
+                >
+                  ×
+                </button>
+              </div>
+              <br>
+            </div>
+            <div class="mt-4" *ngIf="originalLabel && originalLabel.length >0">
+              Nhãn
+              <div *ngFor="let selectedLabel of originalLabel" class="mini-card" [ngStyle]="{'background-color': selectedLabel.color, 'border-color': selectedLabel.color, color: getContrastingColor(selectedLabel.color)}">
+                <span >{{selectedLabel.name}}</span>
+                <button class="btn btn-sm btn-outline-danger ml-2"
+                        (click)="removeLabel(selectedLabel)">
+                  ×
+                </button>
+              </div>
+            </div>
+          <br>
+          <div *ngIf="selectedCard.startDate && selectedCard.dueDate" class="card-row">
+            <input type="checkbox" [(ngModel)]="selectedCard.completed" (change)="updateCard()" class="custom-checkbox-1">
+            <span>Ngày: </span>
+            <span>{{ selectedCard.startDate | date: 'dd/MM' }}  </span> -
+            <span>  {{ selectedCard.dueDate | date: 'HH:mm dd/MM' }}</span>
+            <span *ngIf="isOverdue()" class="status-0">Quá hạn</span>
+            <span *ngIf="selectedCard.completed" class="status-1">Hoàn tất</span>
+          </div>
+
+          <div *ngIf="!selectedCard.startDate && selectedCard.dueDate" class="card-row">
+            <input type="checkbox" [(ngModel)]="selectedCard.completed" (change)="updateCard()" class="custom-checkbox-1">
+            <span>Ngày hết hạn: </span>
+            <span>{{ selectedCard.dueDate | date: 'HH:mm dd/MM' }}</span>
+            <span *ngIf="isOverdue()" class="status-0">Quá hạn</span>
+            <span *ngIf="selectedCard.completed" class="status-1">Hoàn tất</span>
+          </div>
+
+          <div *ngIf="selectedCard.startDate && !selectedCard.dueDate" class="card-row">
+            <span>Ngày bắt đầu: </span>
+            <span>{{ selectedCard.startDate | date: 'dd/MM' }}</span>
+          </div>
+
+          <br>
+          <div class="description-container">
+            <div class="description-header">
+              <div class="description-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-justify-left" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5m0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5"/>
+                </svg>
+                Mô tả
+              </div>
+            </div>
+            <textarea id="description" [(ngModel)]="selectedCard.description" placeholder="Thêm mô tả chi tiết hơn..." class="description-textarea" (click)="toggleDescriptionSection()"></textarea>
+            <div class="action-buttons" *ngIf="showDescriptionSection">
+              <button (click)="updateCard()" class="btn btn-success" >Lưu</button>
+              <button (click)="discardChanges()" class="btn btn-danger" >Hủy</button>
+            </div>
+          </div>
+          <br>
+
+          <div class="checklists-container" *ngIf="originalChecklist && originalChecklist.length > 0">
+            <!-- Hiển thị danh sách checklist -->
+            <div *ngFor="let checklist of originalChecklist" class="checklist-container">
+              <!-- Biểu tượng checkbox cho checklist -->
+              <div class="checklist-header">
+                <!-- Biểu tượng checkbox cho checklist -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
+                  <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5z"/>
+                  <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0"/>
+                </svg>
+
+                <!-- Kiểm tra nếu đang chỉnh sửa tên checklist -->
+                <ng-container *ngIf="editingDescriptionId === checklist.id; else displayChecklist">
+                  <input
+                    [(ngModel)]="checklist.name"
+                    (blur)="saveChecklist(checklist)"
+                    (keydown.enter)="saveChecklist(checklist)"
+                    class="checklist-input"
+                  />
+                </ng-container>
+
+                <!-- Hiển thị tên checklist -->
+                <ng-template #displayChecklist>
+                  <h5 (click)="editChecklistName(checklist.id)" class="checklist-title">
+                    {{ checklist.name }}
+                  </h5>
+                </ng-template>
+
+                <button  class="delete-button" (click)="deleteChecklist(checklist.id)" >Xoá</button>
+              </div>
+
+              <!-- Hiển thị phần trăm hoàn thành -->
+              <div class="checklist-progress">
+                <p>{{ calculateChecklistProgress(checklist.id) }}%</p>
+                <div class="progress-bar">
+                  <div
+                    class="progress-bar-fill"
+                    [style.width.%]="calculateChecklistProgress(checklist.id)"
+                  ></div>
+                </div>
+              </div>
+              <!-- Luôn hiển thị các mục trong checklist -->
+              <div class="checklist-items">
+                <div *ngFor="let item of filterChecklistItems(checklist.id)" class="checklist-item">
+                  <!-- Checkbox để đánh dấu mục đã hoàn thành -->
+                  <input
+                    type="checkbox"
+                    [checked]="item.isCompleted"
+                    (change)="toggleChecklistItemCompletion(item)"
+                    class="checklist-checkbox"
+                  />
+
+                  <!-- Hiển thị tên mục hoặc input nếu đang chỉnh sửa -->
+                  <ng-container *ngIf="editingChecklistItemId === item.id; else displayChecklistItem">
+                    <input
+                      [(ngModel)]="item.name"
+                      (blur)="saveChecklistItem(item)"
+                      (keydown.enter)="saveChecklistItem(item)"
+                      class="checklist-input"
+                    />
+                  </ng-container>
+
+                  <ng-template #displayChecklistItem>
+                    <span (click)="editChecklistItemName(item.id)" class="checklist-item-title">
+                      {{ item.name }}
+                    </span>
+                  </ng-template>
+                </div>
+
+                <!-- Thêm mục mới vào checklist -->
+                <div class="add-item">
+                  <!-- Nút để hiển thị ô input thêm item -->
+                  <button (click)="toggleAddItemInput(checklist.id)" *ngIf="!showAddItemInput[checklist.id]" class="add-button">Thêm một mục</button>
+
+                  <!-- Ô input để thêm item, chỉ hiển thị khi showAddItemInput là true -->
+                  <div *ngIf="showAddItemInput[checklist.id]">
+                    <input
+                      [(ngModel)]="newChecklistItemName[checklist.id]"
+                      (keydown.enter)="addChecklistItem(checklist.id)"
+                      class="add-item-input"
+                      placeholder="Thêm một mục"
+                      style="border-radius: 5px; border-color:  #e0e0e0"
+                    />
+                    <br>
+                    <div class="double-button">
+                    <button (click)="addChecklistItem(checklist.id)" class="btn btn-secondary">Thêm</button>
+                    <button (click)="cancelAddItem(checklist.id)" class="btn btn-danger">Huỷ</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+
+          <div class="description-container">
+            <div class="description-header">
+              <div class="description-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-list-columns-reverse" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M0 .5A.5.5 0 0 1 .5 0h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 0 .5m4 0a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1h-10A.5.5 0 0 1 4 .5m-4 2A.5.5 0 0 1 .5 2h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m-4 2A.5.5 0 0 1 .5 4h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5m-4 2A.5.5 0 0 1 .5 6h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 0 1h-8a.5.5 0 0 1-.5-.5m-4 2A.5.5 0 0 1 .5 8h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 0 1h-8a.5.5 0 0 1-.5-.5m-4 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1h-10a.5.5 0 0 1-.5-.5m-4 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5m-4 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5"/>
+                </svg>
+                Hoạt động
+              </div>
+            </div>
+            áđ
+          </div>
+
+
+        </div>
+        <div class="col-sm-4" >
+          <h5>Thêm vào thẻ</h5>
+          <div class="card-label">
+            <button (click)="toggleMembersSection()" class="btn btn-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
+              <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002-.014.002zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0m3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4"/>
+            </svg>  Thành viên</button>
+          </div>
+          <div *ngIf="showMembersSection" class="modal-2">
+            <div class="modal-content-2">
+              <div class="modal-header">
+                <h5 class="modal-title">Thành viên</h5>
+                <button class="btn btn-danger" (click)="toggleMembersSection()">X</button>
+              </div>
+              <div class="modal-body">
+                <div class="form-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="searchInput"
+                    placeholder="Tìm kiếm các thành viên"
+                    (input)="onSearchInBoard($event)"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="exampleFormControlSelect2">Thành viên của bảng:</label>
+                  <select
+                    multiple
+                    class="form-control"
+                    id="exampleFormControlSelect2"
+                  >
+                    <option
+                      *ngFor="let user of usersInBoard"
+                      [value]="user.id"
+                      [selected]="isSelectedInBoard(user)"
+                      (click)="onSelectChangeInBoard(user)"
+                      [hidden]="!user.visible"
+                    >
+                      {{ user.fullName }}
+                    </option>
+                  </select>
+                </div>
+                <div id="selectedOptions" class="mt-4">
+                  <div *ngFor="let selectedUser of selectedUsersInBoard" class="mini-card">
+                    <span>{{ selectedUser.fullName }}</span>
+                    <button
+                      class="btn btn-sm btn-outline-danger ml-2"
+                      (click)="removeSelectedUserInBoard(selectedUser)"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+                <button  class="btn btn-primary mt-3" (click)="addMemberToCard()">Thêm</button>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-secondary" (click)="toggleMembersSection()">Đóng</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-label">
+            <button (click)="toggleLabelSection()" class="btn btn-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-thunderbolt" viewBox="0 0 16 16">
+              <path d="M3.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"/>
+              <path d="M1 3a1 1 0 0 0-1 1v7.293A1 1 0 0 0 .293 12L2 13.707a1 1 0 0 0 .707.293h10.586a1 1 0 0 0 .707-.293L15.707 12a1 1 0 0 0 .293-.707V4a1 1 0 0 0-1-1zm0 1h14v7.293L13.293 13H2.707L1 11.293z"/>
+            </svg>  Nhãn</button>
+          </div>
+          <div *ngIf="showLabelsSection" class="modal-2">
+            <div class="modal-content-2">
+              <div class="modal-header">
+                <h5 class="modal-title">Nhãn</h5>
+                <button class="btn btn-danger" (click)="toggleLabelSection()">X</button>
+              </div>
+              <div *ngFor="let label of labels">
+                <input type="checkbox" (change)="toggleLabelSelection(label)" class="custom-checkbox" [checked]="selectedLabels.includes(label.id)">
+                <input [(ngModel)]="label.name" [ngStyle]="{'background-color': label.color, 'border': 'none','color': getContrastingColor(label.color)}" class="custom-input"/>
+                <button (click)="openUpdateLabelModal(label)" style="background-color: white; border: none"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                  <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                </svg></button>
+              </div>
+              <hr>
+                <button (click)="toggleAddLabelSection()" class="btn btn-primary" style="text-align: center">Tạo nhãn mới</button>
+            </div>
+          </div>
+          <div *ngIf="showUpdateLabelSection" class="modal-2">
+            <div class="modal-content-2">
+              <div class="modal-header">
+                <h5 class="modal-title">Chỉnh sửa nhãn</h5>
+                <button class="btn btn-danger" (click)="toggleUpdateLabelSection()">X</button>
+              </div>
+              <div>
+                <input type="text" [ngStyle]="{'background-color': selectedLabel?.color, 'border': 'none', 'color': getContrastingColor(selectedLabel?.color)}"
+                       [value]="selectedLabel?.name" disabled />
+              </div>
+              <div>
+                <label for="labelName">Tiêu đề</label>
+                <input *ngIf="selectedLabel" type="text" id="labelName" [(ngModel)]="selectedLabel.name" />
+              </div>
+              <div>
+                <label>Chọn màu</label>
+                <div class="color-palette">
+                  <div *ngFor="let colorOption of colorOptions"
+                       class="color-option"
+                       [ngStyle]="{'background-color': colorOption}"
+                       (click)="selectColorUp(colorOption)">
+                  </div>
+                  <input type="color" [(ngModel)]="customColor" (input)="selectColorUp(customColor)" class="custom-color-picker"/>
+                </div>
+              </div>
+              <hr>
+                <div class="double-button">
+                  <button (click)="updateLabel()" class="btn btn-success">Lưu</button>
+                  <button class="btn btn-danger" (click)="deleteLabel()" >Xóa</button>
+                </div>
+              </div>
+          </div>
+
+          <div *ngIf="showAddLabelSection" class="modal-2">
+            <div class="modal-content-2">
+              <div class="modal-header">
+                <h5 class="modal-title">Tạo nhãn mới</h5>
+                <button class="btn btn-danger" (click)="toggleAddLabelSection()">X</button>
+              </div>
+              <div>
+                <input type="text" [ngStyle]="{'background-color': color, 'border': 'none', 'color': getContrastingColor(color)}"
+                       [value]="labelName" disabled />
+              </div>
+              <div>
+                <label for="labelName">Tiêu đề</label>
+                <input type="text" id="labelName1" [(ngModel)]="labelName" />
+              </div>
+
+              <div>
+                <label>Chọn một màu</label>
+                <div class="color-palette">
+                  <div *ngFor="let colorOption of colorOptions"
+                       class="color-option"
+                       [ngStyle]="{'background-color': colorOption}"
+                       (click)="selectColor(colorOption)">
+                  </div>
+                  <input type="color" [(ngModel)]="customColor" (input)="selectColor(customColor)" class="color-palette"/>
+                </div>
+              </div>
+              <button (click)="addLabel()"  class="btn btn-primary">Tạo mới</button>
+            </div>
+          </div>
+          <div class="card-label">
+            <button (click)="toggleChecklistSection()" class="btn btn-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
+              <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5z"/>
+              <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0"/>
+            </svg>  Việc cần làm</button>
+          </div>
+          <div *ngIf="showChecklistSection" class="modal-2">
+            <div class="modal-content-2">
+              <div class="modal-header">
+                <h5 class="modal-title">Thêm danh sách công việc</h5>
+                <button class="btn btn-danger" (click)="toggleChecklistSection()">X</button>
+              </div>
+              <div>
+                <label for="newChecklistName">Tiêu đề</label>
+                <br>
+                <input type="text" id="newChecklistName"
+                        [(ngModel)]="newChecklistName"
+                        placeholder="Việc phải làm"
+                        (focus)="selectText($event)" />
+
+              </div>
+              <button  class="btn btn-primary" (click)="addChecklist()">Thêm</button>
+            </div>
+          </div>
+          <div class="card-label">
+            <button (click)="toggleDaySection()" class="btn btn-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+              <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+              <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+            </svg>  Ngày</button>
+          </div>
+          <div *ngIf="showDaySection" class="modal-2">
+            <div class="modal-content-2">
+              <div class="modal-header">
+                <h5 class="modal-title">Ngày</h5>
+                <button class="btn btn-danger" (click)="toggleDaySection()">X</button>
+              </div>
+              <div>
+                <label for="startDate">Ngày bắt đầu:</label>
+                <br>
+                <input type="date" id="startDate" [(ngModel)]="selectedCard.startDate" (change)="onStartDateChange()">
+                <br>
+                <label for="dueDate">Ngày kết thúc:</label>
+                <br>
+                <input type="datetime-local" id="dueDate" [(ngModel)]="selectedCard.dueDate" (change)="onDueDateChange()">
+              </div>
+              <button (click)="updateCard()" class="btn btn-primary">Lưu</button>
+            </div>
+          </div>
+          <div class="card-label">
+            <button (click)="toggleAttachmentSection()" class="btn btn-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-angle" viewBox="0 0 16 16">
+              <path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a6 6 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707s.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a6 6 0 0 1 1.013.16l3.134-3.133a3 3 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146m.122 2.112v-.002zm0-.002v.002a.5.5 0 0 1-.122.51L6.293 6.878a.5.5 0 0 1-.511.12H5.78l-.014-.004a5 5 0 0 0-.288-.076 5 5 0 0 0-.765-.116c-.422-.028-.836.008-1.175.15l5.51 5.509c.141-.34.177-.753.149-1.175a5 5 0 0 0-.192-1.054l-.004-.013v-.001a.5.5 0 0 1 .12-.512l3.536-3.535a.5.5 0 0 1 .532-.115l.096.022c.087.017.208.034.344.034q.172.002.343-.04L9.927 2.028q-.042.172-.04.343a1.8 1.8 0 0 0 .062.46z"/>
+            </svg>  Đính kèm</button>
+          </div>
+          <div *ngIf="showAttachment" class="modal-2">
+            <div class="modal-content-2">
+              <div class="modal-header">
+                <h5 class="modal-title">Đính kèm</h5>
+                <button class="btn btn-danger" (click)="toggleAttachmentSection()">X</button>
+              </div>
+              <div *ngFor ="let label of labels">
+                <input [(ngModel)]="label.name" [ngStyle]="{'background-color': label.color, 'border': 'none'} "/>
+              </div>
+              <button>Tạo</button>
+            </div>
+          </div>
+
+          <br>
+          <br>
+          <h5>Thao tác</h5>
+          <div >
+          <div *ngIf="selectedCard">
+          <div class="card-label" >
+            <button (click)="toggleRestoreCard(selectedCard.id)" *ngIf="!showRestoreSection" class="btn btn-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-seam" viewBox="0 0 16 16">
+              <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2zm3.564 1.426L5.596 5 8 5.961 14.154 3.5zm3.25 1.7-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464z"/>
+            </svg>  Lưu trữ</button>
+          </div>
+          <div class="card-label" *ngIf="showRestoreSection">
+            <button (click)="archiveCard(selectedCard.id)" class="btn btn-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z"/>
+              <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466"/>
+            </svg> Bỏ lưu trữ</button>
+          </div>
+          <div class="card-label" *ngIf="showRestoreSection">
+            <button  (click)="deleteCard(selectedCard.id); closeModal()" class="btn btn-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-circle" viewBox="0 0 16 16">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+              <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/>
+            </svg> Xoá</button>
+          </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-message-box
+    (confirm)="onConfirm()"
+    (cancel)="onCancel()"
+  ></app-message-box>
+</section>

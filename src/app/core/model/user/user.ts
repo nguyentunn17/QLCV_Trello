@@ -8,4 +8,5 @@ export class User {
   createAt: any;
   roles: any;
   accessToken: any;
+  visible: boolean = true; // Thêm thuộc tính visible để quản lý trạng thái hiển thị của user
 }

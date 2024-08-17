@@ -1,0 +1,52 @@
+/* Styles for the sidebar */
+.sidebar {
+  height: 100vh;
+  overflow: auto;
+  position: fixed;
+}
+
+.sidebar .nav-link {
+  color: #333;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar .nav-link:hover {
+  background-color: #f8f9fa;
+}
+
+.sidebar .nav-link.active {
+  background-color: #e9ecef;
+  font-weight: bold;
+}
+
+/* Styles for the main content */
+.main-content {
+  height: calc(100vh - 56px); /* Adjust the header height (56px) */
+  overflow-y: auto;
+}
+
+main {
+  margin-left: 250px; /* Adjust based on the width of the sidebar */
+  padding-top: 20px;
+}
+
+/* Header styles */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+
+/* Adjustments for smaller screens */
+@media (max-width: 767.98px) {
+  .sidebar {
+    height: auto;
+    position: relative;
+  }
+
+  main {
+    margin-left: 0;
+  }
+}
+

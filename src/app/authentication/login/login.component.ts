@@ -68,7 +68,7 @@ export class LoginComponent implements OnInit {
   }
 
   reloadPage(): void {
-    this.router.navigate(['register']);
+    this.router.navigate(['board']);
   }
 
   activeSignIn(): void {

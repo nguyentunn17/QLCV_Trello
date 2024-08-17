@@ -1,0 +1,16 @@
+/* Đặt vị trí cố định cho header */
+app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px; /* Chiều cao của header */
+  background-color: #fff;
+  z-index: 1000; /* Đảm bảo header luôn ở trên cùng */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Thêm phần đệm cho nội dung để không bị che bởi header */
+.content {
+  padding-top: 60px; /* Phải bằng chiều cao của header */
+}

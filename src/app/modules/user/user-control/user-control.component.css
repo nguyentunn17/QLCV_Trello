@@ -1,0 +1,121 @@
+.container-fluid{
+  padding: 0 30px;
+}
+
+.menu-item{
+  display: flex;
+  align-items: center;
+  padding: 0.15rem 0;
+  margin-right: 0.5rem;
+}
+.menu-item .menu-link{
+  padding: 0.375rem 1rem;
+}
+.menu-item.here .menu-link {
+  transition: color 0.2s ease;
+  background-color: #F4F6FA;
+  color: #009ef7;
+  border-radius: 0.475rem;
+}
+
+.ht-btn-custom{
+  outline: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: inherit;
+}
+
+/*-------------------------------------------------------------*/
+.toolbar{
+  position: fixed;
+  right: 0;
+  left: 120px;
+  z-index: 99;
+  background-color: #fff;
+  height: 65px;
+  box-shadow: 0px 10px 30px 0px rgba(82, 63, 105, 0.05);
+  border-top: 1px solid #eff2f5;
+}
+
+.custom-select{
+  width: 80px;
+}
+
+/* main------------------------------------------------------ */
+.details{
+  display: grid;
+  grid-gap: 20px;
+}
+
+.details .recent-orders{
+  padding: 20px;
+}
+.add_more:hover{
+  cursor: pointer;
+  color: #fff;
+}
+.remove:hover{
+  cursor: pointer;
+  color: #f00;
+}
+
+.status{
+  padding: 3px 4px;
+  border-radius: 4px;
+  margin: 0 2px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.status:hover{
+  cursor: pointer;
+  color: #000;
+}
+.status_user{
+  background: #8de02c;
+  color: var(--white);
+}
+.status_mod{
+  background: #f9ca3f;
+  color: var(--white);
+}
+.status_admin{
+  background: #f00;
+  color: var(--white);
+}
+.status_add{
+  background: #1795ce;
+}
+.status_save{
+  background: #04aa6d;
+  color: var(--white);
+}
+.details table{
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+.details table thead td{
+  font-weight: 600;
+}
+.details .recent-orders tr{
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+.details .recent-orders table tr:last-child{
+  border-bottom: none;
+}
+.details .recent-orders table tbody tr:hover{
+  box-shadow: 0 0 5px 1px rgba(0,0,0,0.1);
+}
+.details .recent-orders table tr td{
+  padding: 10px;
+}
+.details .recent-orders table tr td:last-child{
+  text-align: end;
+}
+.details .recent-orders table tr td:nth-child(2){
+  text-align: start;
+}
+.details .recent-orders table tr td:nth-child(3){
+  text-align: start;
+}

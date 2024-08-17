@@ -1,0 +1,7 @@
+.btn.btn-danger{
+  background-color: #f44336; /* Màu nền cho nút Xóa */
+  color: white;
+}
+.btn.btn-danger:hover{
+  background-color: #d32f2f; /* Màu nền khi hover */
+}

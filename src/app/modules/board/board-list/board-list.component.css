@@ -1,0 +1,39 @@
+.board-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 15px;
+}
+
+.trello-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+  margin: 10px;
+  width: 300px;
+  transition: box-shadow 0.3s ease;
+}
+
+.trello-card:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.trello-card .card-header {
+  background-color: transparent;
+  border-bottom: none;
+  font-weight: bold;
+  padding: 10px 15px;
+}
+
+.trello-card .card-body {
+  padding: 15px;
+}
+
+.trello-card .btn {
+  margin-top: 10px;
+  overflow: auto;
+}
+/*.container-fluid{*/
+/*  margin: 10px;*/
+/*}*/
+

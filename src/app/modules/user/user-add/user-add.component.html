@@ -1,0 +1,96 @@
+<form (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" ngNativeValidate>
+  <div class="Popup" id="myEdit">
+    <div class="modal-dialog">
+      <div class="modal-content default-bg">
+        <div class="modal-header">
+          <div class="text-center">
+            <img src="assets/images/avatars/logoEcoit.jpg" style="width: 125px;" alt="logo">
+          </div>
+          <span class="close-btn" (click)="closeModal()">&times;</span>
+        </div>
+
+        <div class="modal-body">
+          <div class="Set-pop">
+            <div class="card-body px-5 mx-md-4">
+              <!-- 2 column grid layout with text inputs for the first and last names -->
+              <div *ngIf="isSignUpFailed" class="error-mess mb-4">{{errorMessage}}</div>
+              <div *ngIf="isSuccessful" class="alert-success mb-4">{{errorMessage}}</div>
+              <div class="options" *ngIf="id">
+                <div class="title">ID</div>
+                <input type="text" class="form-control" value="{{id}}" disabled>
+              </div>
+              <div class="row">
+<!--                <div class="col-md-6">-->
+<!--                  <div class="options">-->
+<!--                    <div class="title">Họ</div>-->
+<!--                    <input type="text" class="form-control" name="firstName" [(ngModel)]="user.firstName" placeholder="Họ">-->
+<!--                  </div>-->
+<!--                </div>-->
+                <div class="col-md-6">
+                  <div class="options">
+                    <div class="title">Tên</div>
+                    <input type="text" class="form-control" name="fullName" [(ngModel)]="user.fullName" placeholder="Tên">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Username input -->
+              <div class="options">
+                <div class="title">Tài khoản</div>
+                <input type="text" name="username" [(ngModel)]="user.username" class="form-control" placeholder="Tài khoản" required>
+              </div>
+
+              <!-- Email input -->
+              <div class="options">
+                <div class="title">Email</div>
+                <input type="email" name="email" [(ngModel)]="user.email" class="form-control" placeholder="Email" required>
+              </div>
+
+              <!-- Password input -->
+
+              <div class="row" *ngIf="id; else elseBlock">
+                <div class="col-md-9">
+                  <div class="options">
+                    <div class="title">Mật khẩu</div>
+                    <input type="text" class="form-control" placeholder="Vì lý do bảo mật nên mật khẩu sẽ không hiện" disabled>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="options">
+                    <div class="title">Đặt lại mật khẩu</div>
+                    <button type="button" (click)="resetPassword(id)" class="btn"><i class="far fa-history"></i></button>
+                  </div>
+                </div>
+              </div>
+              <ng-template #elseBlock>
+                <div class="options">
+                  <div class="title">Mật khẩu</div>
+                  <input type="password" name="password" [(ngModel)]="user.password" class="form-control" placeholder="Mật khẩu" required>
+                </div>
+              </ng-template>
+
+              <div class="options">
+                <div class="title">Vai trò</div>
+                <div class="roles-box">
+                  <label>
+                    <input type="radio" name="roles" [(ngModel)]="user.roles" value="admin"> Quản trị viên
+                  </label>
+                  <label>
+                    <input type="radio" name="roles" [(ngModel)]="user.roles" value="mod"> Điều hành
+                  </label>
+                  <label>
+                    <input type="radio" name="roles" [(ngModel)]="user.roles"> Người dùng
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="save-btn" type="submit" name="created"><i class="fas fa-save"></i> Lưu</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

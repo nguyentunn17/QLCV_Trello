@@ -1,0 +1,41 @@
+<div class="container-fluid">
+  <div class="row">
+    <header class="col-12 bg-dark text-white p-3 d-flex justify-content-between align-items-center">
+      <h1 class="text-center">Trello</h1>
+      <button class="btn btn-primary" routerLink="/board/board-add">Tạo bảng</button>
+    </header>
+  </div>
+  <div class="row">
+    <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+      <div class="position-sticky pt-3">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/board">
+              <i class="bi bi-info-circle"></i> Trang chính
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/services">
+              <i class="bi bi-gear"></i> Thành viên
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/contact">
+              <i class="bi bi-envelope"></i> Contact
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link">
+              <i class="bi bi-box-arrow-right">
+                <app-logout></app-logout>
+              </i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

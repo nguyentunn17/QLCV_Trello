@@ -1,0 +1,145 @@
+<div class="toolbar py-1">
+  <!--begin::Container-->
+  <div class="container-fluid d-flex align-items-center">
+    <div class="page-title d-flex align-items-center flex-wrap me-3 mb-5 mb-lg-0">
+      <!--begin::Title-->
+      <h6 class="d-flex align-items-center text-dark fw-bold my-1 fs-3">Tài khoản</h6>
+      <!--end::Title-->
+    </div>
+    <!--begin::Page title-->
+    <div class="flex-grow-1 flex-shrink-0 me-5">
+      <!--begin::Search-->
+      <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center ml-lg-3">
+          <!--begin::Search-->
+          <form (ngSubmit)="search()">
+            <div class="input-group" style="padding: 0.65rem 1rem;">
+              <input type="text" class="form-control" name="keyword" [(ngModel)]="searchField.keyword"
+                     placeholder="Viết gì đó ...">
+              <div class="input-group-append">
+                <button type="submit" class="input-group-text"><i class="fa fa-search"></i></button>
+              </div>
+            </div>
+          </form>
+          <!--end::Search-->
+        </div>
+      </div>
+      <!--end::Search-->
+    </div>
+    <!--end::Page title-->
+    <!--begin::Action group-->
+    <div class="d-flex align-items-center flex-wrap">
+      <!--begin::Wrapper-->
+      <div class="d-flex align-items-center">
+        <!--begin::Daterangepicker-->
+        <div class="menu-item here">
+          <div class="menu-link">
+            <span class="fw-semibold mr-1">Số mục mỗi trang:</span>
+            <select (change)="changePageSize($event)" class="custom-select">
+              <option *ngFor="let size of pageSizes" [ngValue]="size">
+                {{ size }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <!--end::Daterangepicker-->
+        <!--begin::Actions-->
+        <div class="menu-item m-0">
+          <div class="menu-link">
+            <a (click)="addNew()" class="ht-btn-custom p-action-btn hint--rounded hint--bounce hint--bottom-left" aria-label="Thêm mới">
+              <i class="fas fa-file-plus fa-lg"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="menu-item m-0">
+          <div class="menu-link">
+            <a routerLink="../history" routerLinkActive="active" class="ht-btn-custom p-action-btn hint--rounded hint--bounce hint--bottom-left" aria-label="Nhật ký">
+              <i class="fas fa-history fa-lg"></i>
+            </a>
+          </div>
+        </div>
+        <!--end::Actions-->
+      </div>
+      <!--end::Wrapper-->
+    </div>
+    <!--end::Action group-->
+  </div>
+  <!--end::Container-->
+</div>
+
+<div class="d-flex flex-column flex-column-fluid">
+  <!--begin::Container-->
+  <div class="site-wrapper-reveal">
+    <!--====================  Blog Area Start ====================-->
+    <div class="blog-pages-wrapper section-space--ptb_90">
+      <div class="container">
+        <div class="faq-wrapper">
+
+          <!-- order details lists -->
+          <div class="details">
+            <div class="card recent-orders">
+              <div class="card-header">
+                <span class="status status_user">User</span>
+                <span class="status status_mod">Mod</span>
+                <span class="status status_admin">Admin</span>
+              </div>
+              <hr>
+
+              <table id="myTable">
+                <thead>
+                  <tr>
+                    <td>Tên đăng nhập</td>
+                    <td>Họ</td>
+                    <td>Tên</td>
+                    <td>Email</td>
+                    <td>Status</td>
+                    <td></td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let user of users">
+                    <td>{{user.username}}</td>
+                    <td>{{user.fullName}}</td>
+                    <td>{{user.fullName}}</td>
+                    <td>{{user.email}}</td>
+                    <td>
+                      <span style="color: #31A24C">
+                          <i class="fas fa-circle fa-xs"></i>
+                        </span>
+                      <span class="ml-1">Hoạt động</span>
+                    </td>
+                    <td *ngFor="let role of user.roles">
+                      <container-element [ngSwitch]="role.roleId">
+                        <span *ngSwitchCase="1" class="status status_admin" (click)="updateUser(user.id)"><i class="fas fa-pen"></i></span>
+                        <span *ngSwitchCase="2" class="status status_mod" (click)="updateUser(user.id)"><i class="fas fa-pen"></i></span>
+                        <span *ngSwitchCase="3" class="status status_user" (click)="updateUser(user.id)"><i class="fas fa-pen"></i></span>
+                      </container-element>
+
+                      <span class="status bg-primary">
+                        <a style="color: #fff;" href="#" ><i class="fas fa-trash-alt remove"></i></a>
+                      </span>
+                      <span class="status">
+                        <a style="color: #000;" (click)="activeDetails(user.username)"><i class="fas fa-info-square fa-xl"></i></a>
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div *ngIf="totalPages > 1" class="col-lg-12 wow move-up">
+            <div class="ht-pagination mt-30 pagination justify-content-center">
+              <div class="pagination-wrapper">
+<!--                <pagination-controls (pageChange)="pageChanged($event)"></pagination-controls>-->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--====================  Blog Area End  ====================-->
+    </div>
+  </div>
+  <!--end::Container-->
+</div>

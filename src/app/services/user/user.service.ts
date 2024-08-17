@@ -16,6 +16,17 @@ export class UserService{
     return this.httpClient.get(`${this.baseURL}`,{params: param})
   }
 
+  getSearch(keyword: string): Observable<User[]> {
+    const params = new HttpParams().set('keyWord', keyword);
+
+    return this.httpClient.get<User[]>(`${this.baseURL}/loc`, { params: params });
+  }
+  getUserByBoard(boardId: string): Observable<User[]>{
+    return this.httpClient.get<User[]>(`${this.baseURL}/all3/${boardId}`)
+  }
+  getUserNotAtBoard(boardId: string): Observable<User[]>{
+    return this.httpClient.get<User[]>(`${this.baseURL}/all4/${boardId}`)
+  }
   getUserList(): Observable<any>{
     return this.httpClient.get(`${this.baseURL}/all`)
   }

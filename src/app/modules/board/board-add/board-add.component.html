@@ -1,0 +1,74 @@
+<section>
+  <div>
+    <h2>Thêm bảng mới</h2>
+  </div>
+  <hr>
+  <div class="container mt-5">
+    <form>
+      <div class="form-group board-title">
+        <label for="boardTitle">Tên bảng</label><br>
+        <input
+          type="text"
+          class="form-control"
+          id="boardTitle"
+          [(ngModel)]="boardTitle"
+          name="boardTitle"
+          required
+        />
+      </div>
+      <div class="form-group board-description">
+        <label for="boardDescription">Mô tả</label><br>
+        <input
+          type="text"
+          class="form-control"
+          id="boardDescription"
+          [(ngModel)]="boardDescription"
+          name="boardDescription"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="searchInput">Tìm kiếm:</label>
+        <input
+          type="text"
+          class="form-control"
+          id="searchInput"
+          placeholder="Tìm kiếm thành viên"
+          (input)="onSearch($event)"
+        />
+      </div>
+      <div class="form-group">
+        <label for="exampleFormControlSelect2">Thành viên:</label>
+        <select
+          multiple
+          class="form-control"
+          id="exampleFormControlSelect2"
+        >
+          <option
+            *ngFor="let user of users"
+            [value]="user.id"
+            [selected]="isSelected(user)"
+            (click)="onSelectChange(user)"
+            [hidden]="!user.visible"
+          >
+            {{ user.fullName }}
+          </option>
+        </select>
+      </div>
+      <div id="selectedOptions" class="mt-4">
+        <div *ngFor="let selectedUser of selectedUsers" class="mini-card">
+          <span>{{ selectedUser.fullName }}</span>
+          <button
+            class="btn btn-sm btn-outline-danger ml-2"
+            (click)="removeSelectedUser(selectedUser)"
+          >
+            ×
+          </button>
+        </div>
+      </div>
+      <button class="btn btn-primary mt-3" (click)="onCreateBoard()">
+        Thêm
+      </button>
+    </form>
+  </div>
+</section>

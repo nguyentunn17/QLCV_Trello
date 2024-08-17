@@ -1,0 +1,26 @@
+<section>
+  <div>
+    <h2>{{ boardName }}</h2>
+  </div><hr>
+  <div class="row">
+    <div class="col-md-3 add-list-container">
+      <input [(ngModel)]="newListName" class="form-control" placeholder="New list name">
+      <button class="btn btn-primary" (click)="addList()">Add List</button>
+    </div>
+    <div class="col-md-9 list-container-wrapper">
+      <div class="list-container" cdkDropListGroup>
+        <div *ngFor="let list of lists" class="list" cdkDropList (cdkDropListDropped)="dropList($event)">
+          <h3>{{ list.name }}</h3>
+          <div *ngFor="let card of list.cards" class="card" cdkDrag>
+            {{ card.title }}
+          </div>
+          <div class="add-card-container">
+            <input [(ngModel)]="newCardTitle" class="form-control" placeholder="New card title" *ngIf="selectedListId === list.id">
+            <button class="btn btn-secondary" (click)="selectedListId = list.id" *ngIf="selectedListId !== list.id">Add Card</button>
+            <button class="btn btn-success" (click)="addCard()" *ngIf="selectedListId === list.id">Save Card</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
